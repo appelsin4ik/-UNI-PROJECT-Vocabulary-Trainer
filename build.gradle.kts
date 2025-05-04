@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.optional.jlink.jlink
+
 buildscript {
     repositories {
         mavenLocal()
@@ -12,11 +14,10 @@ buildscript {
 plugins {
     java
     application
+    id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.beryx.jlink") version "3.1.1"
     //id("org.graalvm.buildtools.native") version "0.10.6"
 }
-
-group = "project"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -27,14 +28,21 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
+application {
+    mainClass = "project.Main"
+}
+
+group = "project"
+version = "1.0-SNAPSHOT"
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
-application {
-    mainClass = "project.Main"
+javafx {
+    modules("javafx.controls", "javafx.fxml")
 }
 
 tasks.test {
@@ -50,27 +58,55 @@ tasks.javadoc {
     }
 }
 
-// jar build Task
+jlink {
+    imageName = "Projekt"
+
+    addExtraDependencies("javafx")
+
+    // Point to the deobfuscated JAR instead of the regular build output
+    mergedModule {
+        enabled = false
+        additive = true
+        requires("javafx.controls")
+
+        //jarFiles.from(file("${layout.buildDirectory}/deobfuscated/app-deobf.jar"))
+    }
+
+    addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
+    launcher {
+        name = "projekt"
+        noConsole = true
+    }
+
+//    tasks.named("jlink").configure {
+//        dependsOn("proguard")
+//    }
+}
+
+// obfuscated and packaged run Task
+tasks.register<JavaExec>("run-production") {
+    val jlinkTask = tasks.named("jlink")
+    dependsOn(jlinkTask)
+
+    doFirst {
+//        logger.lifecycle("ProGuard output files:")
+//        jlinkTask.get().outputs.files.forEach { logger.lifecycle(" - ${it.absolutePath}") }
+
+        val outputJar = jlinkTask.get().outputs.files.files.find { it.extension == "jar" }
+            ?: throw GradleException("No JAR file found in Task outputs.")
+        mainClass.set("-jar")
+        args = listOf(outputJar.absolutePath)
+    }
+}
+
+// jar build Task benötigt für ProGuardTask
 tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = application.mainClass
     }
-}
 
-// obfuscated jar run Task
-tasks.register<JavaExec>("run-obfuscated") {
-    val proguardTask = tasks.named("proguard")
-    dependsOn(proguardTask)
-
-    doFirst {
-//        logger.lifecycle("ProGuard output files:")
-//        proguardTask.get().outputs.files.forEach { logger.lifecycle(" - ${it.absolutePath}") }
-
-        val outputJar = proguardTask.get().outputs.files.files.find { it.extension == "jar" }
-            ?: throw GradleException("No JAR file found in ProGuard outputs.")
-        mainClass.set("-jar")
-        args = listOf(outputJar.absolutePath)
-    }
+//    var proguardTask = tasks.named("proguard")
+//    dependsOn("proguard")
 }
 
 // https://github.com/Guardsquare/proguard/blob/ef6a8352bdbbf233e21a9dee5e5f9ac394cb7fc3/examples/gradle-kotlin-dsl/build.gradle.kts
@@ -96,6 +132,7 @@ tasks.register<proguard.gradle.ProGuardTask>("proguard") {
             "$javaHome/jmods/java.base.jmod"
         )
     }
+    ignorewarnings()
 
     allowaccessmodification()
 
@@ -106,6 +143,7 @@ tasks.register<proguard.gradle.ProGuardTask>("proguard") {
     keep("""class ${application.mainClass.get()} {
                 public static void main(java.lang.String[]);
             }
+            class javafx.** { *; }
     """)
 
     // output Dateien an andere Tasks übergeben
