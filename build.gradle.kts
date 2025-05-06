@@ -75,7 +75,11 @@ jlink {
     addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
     launcher {
         name = "projekt"
-        noConsole = true
+        //noConsole = true
+    }
+
+    tasks.named("jlink").configure {
+        dependsOn("clean")
     }
 
     tasks.named<PrepareModulesDirTask>("prepareModulesDir").configure {
@@ -111,6 +115,7 @@ tasks.withType<Jar> {
 // https://github.com/Guardsquare/proguard/blob/ef6a8352bdbbf233e21a9dee5e5f9ac394cb7fc3/examples/gradle-kotlin-dsl/build.gradle.kts
 tasks.register<proguard.gradle.ProGuardTask>("proguard") {
     verbose()
+    ignorewarnings()
 
     // Use the jar task output as a input jar. This will automatically add the necessary task dependency.
     injars(tasks.named("jar"))
@@ -131,19 +136,26 @@ tasks.register<proguard.gradle.ProGuardTask>("proguard") {
             "$javaHome/jmods/java.base.jmod"
         )
     }
-    ignorewarnings()
 
-    allowaccessmodification()
-
+    //allowaccessmodification()
     repackageclasses("")
 
     printmapping("build/proguard-mapping.txt")
 
-    keep("""class ${application.mainClass.get()} {
-                public static void main(java.lang.String[]);
-            }
-            class javafx.** { *; }
-            class module-info;
+    keeppackagenames()
+    keep("class module-info")
+    keep("""
+        class ${application.mainClass.get()} {
+            public static void main(java.lang.String[]);
+            public abstract void start(javafx.stage.Stage);
+        }
+        class javafx.** { *; }
+    """)
+    keepclassmembers("""
+        class * {
+            @java.lang.Overwrite *;
+            public abstract *;
+        }
     """)
     keepattributes("Module*")
 
