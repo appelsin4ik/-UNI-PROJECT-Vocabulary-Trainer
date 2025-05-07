@@ -38,17 +38,13 @@ public class DeckDisplayScreen extends Application {
         deckContainer.setVgap(15);
         deckContainer.setPadding(new Insets(10));
 
-        // Add deck buttons to the grid
-        int column = 0;
-        int row = 0;
-        int columns = 3; // Number of columns in the grid
-
         for (Deck deck : deckManager.getDecks()) {
             // Create container for each deck
             VBox deckBox = new VBox(10);
             deckBox.setAlignment(Pos.CENTER);
             deckBox.setPadding(new Insets(10));
             deckBox.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
+            deckBox.setMinWidth(200);
 
             // Deck name label
             Label deckName = new Label(deck.getName());
