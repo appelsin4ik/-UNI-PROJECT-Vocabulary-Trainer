@@ -42,6 +42,7 @@ public class DeckDisplayScreen extends Application {
         stage.show();
     }
 
+    //Enthält die Funktionalität, um die Sidebar zu rendern
     private VBox createSidebar() {
         VBox sidebar = new VBox(10);
         sidebar.setPadding(new Insets(20, 0, 0, 0));
@@ -89,16 +90,17 @@ public class DeckDisplayScreen extends Application {
         return sidebar;
     }
 
+    //Erstellt die einzelnen Elemente der Sidebar (also z.B. Einstellungen, Karten etc.)
     private Button createNavButton(String text, FontAwesomeIconView icon) {
-        Button button = new Button(text, icon);
+        Button button = new Button("  " + text, icon);
         button.setPadding(new Insets(0, 0, 0, 0));
         button.setMaxWidth(Double.MAX_VALUE);
         button.setAlignment(Pos.BASELINE_LEFT);
-        button.setStyle("-fx-text-fill: white; -fx-font-size: 14px; " +
+        button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
                 "-fx-background-color: transparent; -fx-padding: 10px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 14px; " +
+        button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
                 "-fx-background-color: #34495e; -fx-padding: 10px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 14px; " +
+        button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
                 "-fx-background-color: transparent; -fx-padding: 10px;"));
         return button;
     }
@@ -108,7 +110,7 @@ public class DeckDisplayScreen extends Application {
         content.setPadding(new Insets(20));
 
         // Title
-        Label title = new Label("Your Decks");
+        Label title = new Label("Deine Decks");
         title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
         // Deck container
