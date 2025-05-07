@@ -11,6 +11,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CardViewScreen {
     // Screen dimensions as global constants
     private static final int SCREEN_WIDTH = 800;
@@ -102,13 +105,12 @@ public class CardViewScreen {
         difficultyBox.setAlignment(Pos.CENTER);
 
         leichtButton = createDifficultyButton("Leicht", "#4CAF50");
-        leichtButton.setOnAction(e -> adjustCardWeight(-1));
-
         mittelButton = createDifficultyButton("Mittel", "#FFC107");
-        mittelButton.setOnAction(e -> adjustCardWeight(0));
-
         schwerButton = createDifficultyButton("Schwer", "#F44336");
-        schwerButton.setOnAction(e -> adjustCardWeight(2));
+
+        leichtButton.setOnAction(e -> setCardWeight(1));
+        mittelButton.setOnAction(e -> setCardWeight(2));
+        schwerButton.setOnAction(e -> setCardWeight(3));
 
         difficultyBox.getChildren().addAll(leichtButton, mittelButton, schwerButton);
         bottomBox.getChildren().addAll(toggleButton, difficultyBox);
@@ -148,10 +150,9 @@ public class CardViewScreen {
                 "-fx-background-color: " + color + ";";
 
         // Add border if this is the selected button
-        if ((text.equals("Leicht") && deck.getCards().get(currentCardIndex).weight == 0) ||
-                (text.equals("Mittel") && (deck.getCards().get(currentCardIndex).weight == 1 ||
-                        deck.getCards().get(currentCardIndex).weight == 2)) ||
-                (text.equals("Schwer") && deck.getCards().get(currentCardIndex).weight > 2)) {
+        if ((text.equals("Leicht") && deck.getCards().get(currentCardIndex).weight == 1) ||
+                (text.equals("Mittel") && deck.getCards().get(currentCardIndex).weight == 2) ||
+                (text.equals("Schwer") && deck.getCards().get(currentCardIndex).weight == 3)) {
             style += "-fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 20px;";
         }
 
@@ -166,30 +167,69 @@ public class CardViewScreen {
         schwerButton.setStyle(getBaseButtonStyle("Schwer", "#F44336"));
     }
 
-    private void adjustCardWeight(int change) {
+    private void setCardWeight(int newWeight) {
         if (deck.getCards().isEmpty()) return;
 
         Card currentCard = deck.getCards().get(currentCardIndex);
-        currentCard.weight += change;
+        currentCard.weight = newWeight; // Directly set the weight
 
-        // Ensure weight doesn't go below 0
-        if (currentCard.weight < 0) {
-            currentCard.weight = 0;
-        }
+        // Sort the deck by weight (using Card's compareTo method)
+        deck.getCards().sort(Card::compareTo);
 
-        // You could add visual feedback here
-        System.out.println("Card weight updated to: " + currentCard.weight);
-        updateDifficultyButtons(); // Initialize button states
+        // Find the new index of our current card after sorting
+        currentCardIndex = deck.getCards().indexOf(currentCard);
+
+        System.out.println("Card weight set to: " + currentCard.weight);
+        updateDifficultyButtons();
+        updateCardDisplay();
+        printDeckDebugInfo();
     }
 
     private void navigateCard(int direction) {
         showTranslation = false;
-        currentCardIndex += direction;
-        if (currentCardIndex < 0) currentCardIndex = 0;
-        if (currentCardIndex >= deck.getCards().size()) currentCardIndex = deck.getCards().size() - 1;
+
+        if (deck.getCards().isEmpty()) return;
+
+        // Find next card with weight > 0 when reaching list boundaries
+        if (direction > 0 && currentCardIndex >= deck.getCards().size() - 1) {
+            // Reached end - find first card with weight > 0
+            currentCardIndex = findNextWeightedCard(0);
+        }
+        else if (direction < 0 && currentCardIndex <= 0) {
+            // Reached beginning - find last card with weight > 0
+            currentCardIndex = findPreviousWeightedCard(deck.getCards().size() - 1);
+        }
+        else {
+            // Normal navigation
+            currentCardIndex += direction;
+        }
+
         updateCardDisplay();
-        updateDifficultyButtons(); // Initialize button states
+        updateDifficultyButtons();
+
+        printDeckDebugInfo();
     }
+
+    private int findNextWeightedCard(int startIndex) {
+        List<Card> cards = deck.getCards();
+        for (int i = startIndex; i < cards.size(); i++) {
+            if (cards.get(i).weight > 0) {
+                return i;
+            }
+        }
+        return 0; // Fallback to first card if none found
+    }
+
+    private int findPreviousWeightedCard(int startIndex) {
+        List<Card> cards = deck.getCards();
+        for (int i = startIndex; i >= 0; i--) {
+            if (cards.get(i).weight > 0) {
+                return i;
+            }
+        }
+        return cards.size() - 1; // Fallback to last card if none found
+    }
+
 
     private void updateCardDisplay() {
         if (deck.getCards().isEmpty()) return;
@@ -200,5 +240,27 @@ public class CardViewScreen {
         } else {
             cardContentLabel.setText(currentCard.vocabulary + "\n────────────\n                ");
         }
+    }
+
+    public void printDeckDebugInfo() {
+        if (deck == null || deck.getCards().isEmpty()) {
+            System.out.println("Deck is empty or not initialized");
+            return;
+        }
+
+        System.out.println("\n=== Deck Debug Info ===");
+        System.out.printf("%-20s %s%n", "Card Name", "Weight");
+        System.out.println("--------------------- ------");
+
+        for (int i = 0; i < deck.getCards().size(); i++) {
+            Card card = deck.getCards().get(i);
+            String currentIndicator = (i == currentCardIndex) ? "-> " : "   ";
+            System.out.printf("%s%-17s %6d%n",
+                    currentIndicator,
+                    card.vocabulary,
+                    card.weight);
+        }
+
+        System.out.println("=====================\n");
     }
 }
