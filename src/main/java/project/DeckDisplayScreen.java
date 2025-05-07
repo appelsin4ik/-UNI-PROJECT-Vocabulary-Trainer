@@ -8,17 +8,20 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.geometry.Pos;
 
 public class DeckDisplayScreen extends Application {
 
     private DeckManager deckManager;
+    private Stage stage;
 
-    public DeckDisplayScreen(DeckManager deckManager) {
+    public DeckDisplayScreen(DeckManager deckManager, Stage stage) {
         this.deckManager = deckManager;
+        this.stage = stage;
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) {
         // Create the main layout
         VBox mainLayout = new VBox(10);
         mainLayout.setPadding(new Insets(15));
@@ -26,15 +29,14 @@ public class DeckDisplayScreen extends Application {
                 Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         // Add title
-        Label title = new Label("Your Card Decks");
+        Label title = new Label("Your Decks");
         title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-        mainLayout.getChildren().add(title);
+        //mainLayout.getChildren().add(title);
 
-        // Create a grid for the deck buttons
-        GridPane deckGrid = new GridPane();
-        deckGrid.setHgap(10);
-        deckGrid.setVgap(10);
-        deckGrid.setPadding(new Insets(10));
+        FlowPane deckContainer = new FlowPane();
+        deckContainer.setHgap(15);
+        deckContainer.setVgap(15);
+        deckContainer.setPadding(new Insets(10));
 
         // Add deck buttons to the grid
         int column = 0;
@@ -42,33 +44,45 @@ public class DeckDisplayScreen extends Application {
         int columns = 3; // Number of columns in the grid
 
         for (Deck deck : deckManager.getDecks()) {
-            Button deckButton = createDeckButton(deck);
-            deckGrid.add(deckButton, column, row);
+            // Create container for each deck
+            VBox deckBox = new VBox(10);
+            deckBox.setAlignment(Pos.CENTER);
+            deckBox.setPadding(new Insets(10));
+            deckBox.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
 
-            column++;
-            if (column >= columns) {
-                column = 0;
-                row++;
-            }
+            // Deck name label
+            Label deckName = new Label(deck.getName());
+            deckName.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+            // Card count label
+            Label cardCount = new Label(deck.getCards().size() + " cards");
+            cardCount.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
+
+            // Start button
+            Button startButton = new Button("Start");
+            startButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
+            startButton.setOnAction(e -> showCardScreen(deck));
+
+            deckBox.getChildren().addAll(deckName, cardCount, startButton);
+            deckContainer.getChildren().add(deckBox);
         }
 
-        mainLayout.getChildren().add(deckGrid);
-
         // Set up the scene
-        Scene scene = new Scene(mainLayout, 600, 400);
-        primaryStage.setTitle("Card Deck Manager");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        mainLayout.getChildren().addAll(title, deckContainer);
+        stage.setScene(new Scene(mainLayout, 800, 600));
+        stage.setTitle("Vocabulary Learner");
+        stage.show();
     }
 
-    private Button createDeckButton(Deck deck) {
-        Button button = new Button(deck.getName());
-        button.setStyle("-fx-font-size: 14px;");
-        button.setPrefSize(150, 100);
-        button.setOnAction(e -> {
-            System.out.println("Selected deck: " + deck.getName());
-            // Here you would open the deck details view
-        });
-        return button;
+    private void showCardScreen(Deck deck) {
+        CardViewScreen cardView = new CardViewScreen(deck, stage, this::show);
+        cardView.show();
     }
+
+    public void show() {
+//        VBox mainLayout = createDeckDisplay();
+//        stage.setScene(new Scene(mainLayout, 800, 600));
+        start(stage);
+    }
+
 }

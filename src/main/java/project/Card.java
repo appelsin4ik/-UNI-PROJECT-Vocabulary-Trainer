@@ -1,5 +1,6 @@
 package project;
 
+
 public class Card {
     public String vocabulary;
     public String translation;
