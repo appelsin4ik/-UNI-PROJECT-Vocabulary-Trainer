@@ -1,5 +1,7 @@
 package project;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,8 +36,11 @@ public class CardViewScreen {
         root.setPadding(new Insets(20));
         root.setStyle("-fx-background-color: #f5f5f5;");
 
+        FontAwesomeIconView backIcon = new FontAwesomeIconView(FontAwesomeIcon.ARROW_LEFT);
+        backIcon.setSize("16px");
+
         // Back button (top left)
-        Button backButton = new Button("← Back to Decks");
+        Button backButton = new Button("Back to Decks", backIcon);
         backButton.setStyle("-fx-font-size: 14px;");
         backButton.setOnAction(e -> onBack.run());
         root.setTop(backButton);
@@ -44,9 +49,10 @@ public class CardViewScreen {
         HBox centerBox = new HBox(20);
         centerBox.setAlignment(Pos.CENTER);
 
-        // Previous button (left of card)
-        Button prevButton = new Button("←");
-        prevButton.setStyle("-fx-font-size: 20px; -fx-min-width: 60px; -fx-min-height: 60px;");
+        FontAwesomeIconView prevIcon = new FontAwesomeIconView(FontAwesomeIcon.CHEVRON_LEFT);
+        prevIcon.setSize("24px");
+        Button prevButton = new Button("", prevIcon);
+        prevButton.setStyle("-fx-min-width: 60px; -fx-min-height: 60px;");
         prevButton.setOnAction(e -> navigateCard(-1));
 
         // Card display
@@ -63,9 +69,11 @@ public class CardViewScreen {
         cardBox.getChildren().add(cardContentLabel);
         updateCardDisplay();
 
-        // Next button (right of card)
-        Button nextButton = new Button("→");
-        nextButton.setStyle("-fx-font-size: 20px; -fx-min-width: 60px; -fx-min-height: 60px;");
+        // Next button with icon
+        FontAwesomeIconView nextIcon = new FontAwesomeIconView(FontAwesomeIcon.CHEVRON_RIGHT);
+        nextIcon.setSize("24px");
+        Button nextButton = new Button("", nextIcon);
+        nextButton.setStyle("-fx-min-width: 60px; -fx-min-height: 60px;");
         nextButton.setOnAction(e -> navigateCard(1));
 
         centerBox.getChildren().addAll(prevButton, cardBox, nextButton);
@@ -75,9 +83,11 @@ public class CardViewScreen {
         VBox bottomBox = new VBox(20);
         bottomBox.setAlignment(Pos.CENTER);
 
+        FontAwesomeIconView eyeIcon = new FontAwesomeIconView(FontAwesomeIcon.EYE);
+        eyeIcon.setSize("50px");
         // Toggle button
-        Button toggleButton = new Button("Toggle Translation");
-        toggleButton.setStyle("-fx-font-size: 14px; -fx-padding: 8px 16px;");
+        Button toggleButton = new Button("",eyeIcon);
+        toggleButton.setStyle("-fx-font-size: 24px; -fx-padding: 12px 16px;");
         toggleButton.setOnAction(e -> {
             showTranslation = !showTranslation;
             updateCardDisplay();
