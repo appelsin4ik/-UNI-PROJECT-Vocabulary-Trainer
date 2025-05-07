@@ -10,8 +10,6 @@ import javafx.stage.Stage;
  * Main Application Class
  */
 public class Main extends Application {
-
-
     public static void main(String[] args) {
         System.out.println("Hello and welcome!");
 
