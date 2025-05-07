@@ -1,5 +1,7 @@
 package project;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -22,56 +24,131 @@ public class DeckDisplayScreen extends Application {
 
     @Override
     public void start(Stage stage) {
-        // Create the main layout
-        VBox mainLayout = new VBox(10);
-        mainLayout.setPadding(new Insets(15));
-        mainLayout.setBackground(new Background(new BackgroundFill(
-                Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        // Main layout with sidebar and content
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: #f5f5f5;");
 
-        // Add title
-        Label title = new Label("Your Decks");
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-        //mainLayout.getChildren().add(title);
+        // Create sidebar
+        VBox sidebar = createSidebar();
+        root.setLeft(sidebar);
 
+        // Create main content area
+        VBox content = createMainContent();
+        root.setCenter(content);
+
+        // Set up the scene
+        stage.setScene(new Scene(root, 1000, 700)); // Increased width for sidebar
+        stage.setTitle("Vocabulary Learner");
+        stage.show();
+    }
+
+    //Enthält die Funktionalität, um die Sidebar zu rendern
+    private VBox createSidebar() {
+        VBox sidebar = new VBox(10);
+        sidebar.setPadding(new Insets(20, 0, 0, 0));
+        sidebar.setStyle("-fx-background-color: #2c3e50;");
+        sidebar.setMinWidth(200);
+        sidebar.setPrefWidth(200);
+
+        // Sidebar title
+        Label sidebarTitle = new Label("Navigation");
+        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
+        sidebarTitle.setPadding(new Insets(0, 0, 20, 20));
+
+        // Navigation icons
+        FontAwesomeIconView tableIcon = new FontAwesomeIconView(FontAwesomeIcon.TABLE);
+        tableIcon.setSize("25px");
+        tableIcon.setFill(Color.WHITE);
+
+        FontAwesomeIconView barsIcon = new FontAwesomeIconView(FontAwesomeIcon.BARS);
+        barsIcon.setSize("25px");
+        barsIcon.setFill(Color.WHITE);
+
+        FontAwesomeIconView slidersIcon = new FontAwesomeIconView(FontAwesomeIcon.SLIDERS);
+        slidersIcon.setSize("25px");
+        slidersIcon.setFill(Color.WHITE);
+
+        FontAwesomeIconView cardsIcon = new FontAwesomeIconView(FontAwesomeIcon.STICKY_NOTE);
+        cardsIcon.setSize("25px");
+        cardsIcon.setFill(Color.WHITE);
+
+        //Navigation buttons
+        Button cardsButton = createNavButton( "Karten", cardsIcon);
+        Button decksButton = createNavButton("Decks", barsIcon);
+        Button managementButton = createNavButton("Karten-Verwaltung", tableIcon);
+        Button settingsButton = createNavButton("Einstellungen", slidersIcon);
+
+        // Add all elements to sidebar
+        sidebar.getChildren().addAll(
+                sidebarTitle,
+                cardsButton,
+                decksButton,
+                managementButton,
+                settingsButton
+        );
+
+        return sidebar;
+    }
+
+    //Erstellt die einzelnen Elemente der Sidebar (also z.B. Einstellungen, Karten etc.)
+    private Button createNavButton(String text, FontAwesomeIconView icon) {
+        Button button = new Button("  " + text, icon);
+        button.setPadding(new Insets(0, 0, 0, 0));
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setAlignment(Pos.BASELINE_LEFT);
+        button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
+                "-fx-background-color: transparent; -fx-padding: 10px;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
+                "-fx-background-color: #34495e; -fx-padding: 10px;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
+                "-fx-background-color: transparent; -fx-padding: 10px;"));
+        return button;
+    }
+
+    private VBox createMainContent() {
+        VBox content = new VBox(10);
+        content.setPadding(new Insets(20));
+
+        // Title
+        Label title = new Label("Deine Decks");
+        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        // Deck container
         FlowPane deckContainer = new FlowPane();
         deckContainer.setHgap(15);
         deckContainer.setVgap(15);
         deckContainer.setPadding(new Insets(10));
 
-        // Add deck buttons to the grid
-        int column = 0;
-        int row = 0;
-        int columns = 3; // Number of columns in the grid
-
         for (Deck deck : deckManager.getDecks()) {
-            // Create container for each deck
-            VBox deckBox = new VBox(10);
-            deckBox.setAlignment(Pos.CENTER);
-            deckBox.setPadding(new Insets(10));
-            deckBox.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
-
-            // Deck name label
-            Label deckName = new Label(deck.getName());
-            deckName.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-
-            // Card count label
-            Label cardCount = new Label(deck.getCards().size() + " cards");
-            cardCount.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
-
-            // Start button
-            Button startButton = new Button("Start");
-            startButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
-            startButton.setOnAction(e -> showCardScreen(deck));
-
-            deckBox.getChildren().addAll(deckName, cardCount, startButton);
+            VBox deckBox = createDeckBox(deck);
             deckContainer.getChildren().add(deckBox);
         }
 
-        // Set up the scene
-        mainLayout.getChildren().addAll(title, deckContainer);
-        stage.setScene(new Scene(mainLayout, 800, 600));
-        stage.setTitle("Vocabulary Learner");
-        stage.show();
+        content.getChildren().addAll(title, deckContainer);
+        return content;
+    }
+
+    private VBox createDeckBox(Deck deck) {
+        VBox deckBox = new VBox(10);
+        deckBox.setAlignment(Pos.CENTER);
+        deckBox.setPadding(new Insets(15));
+        deckBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+        deckBox.setMinWidth(235);
+
+        Label deckName = new Label(deck.getName());
+        deckName.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        Label cardCount = new Label(deck.getCards().size() + " cards");
+        cardCount.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
+
+        Button startButton = new Button("Start");
+        startButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; " +
+                "-fx-text-fill: white; -fx-padding: 8px 16px;");
+        startButton.setOnAction(e -> showCardScreen(deck));
+
+        deckBox.getChildren().addAll(deckName, cardCount, startButton);
+        return deckBox;
     }
 
     private void showCardScreen(Deck deck) {
@@ -80,9 +157,6 @@ public class DeckDisplayScreen extends Application {
     }
 
     public void show() {
-//        VBox mainLayout = createDeckDisplay();
-//        stage.setScene(new Scene(mainLayout, 800, 600));
         start(stage);
     }
-
 }

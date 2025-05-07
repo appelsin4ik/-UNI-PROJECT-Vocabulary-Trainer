@@ -11,7 +11,8 @@ public class DeckManager {
         decks = Arrays.asList(
                 createBasicVocabularyDeck(),
                 createAdvancedVocabularyDeck(),
-                createFoodVocabularyDeck()
+                createFoodVocabularyDeck(),
+                createDummyVocabularyDeck()
         );
     }
 
@@ -42,7 +43,20 @@ public class DeckManager {
         deck.addCard(new Card("Cheese", "Fromage", 1));
         deck.addCard(new Card("Water", "Eau", 1));
         deck.addCard(new Card("Wine", "Vin", 1));
-        deck.addCard(new Card("Beef", "Bœuf", 2));
+        deck.addCard(new Card("Beef", "Bœuf", 1));
+        return deck;
+    }
+
+    private Deck createDummyVocabularyDeck() {
+        Deck deck = new Deck("Advanced Food Vocabulary");
+        deck.addCard(new Card("Apple", "Pomme", 1));
+        deck.addCard(new Card("Bread", "Pain", 1));
+        deck.addCard(new Card("Cheese", "Fromage", 1));
+        deck.addCard(new Card("Water", "Eau", 1));
+        deck.addCard(new Card("Wine", "Vin", 1));
+        deck.addCard(new Card("Beef", "Bœuf", 1));
+        deck.addCard(new Card("Cheese", "Fromage", 1));
+        deck.addCard(new Card("Water", "Eau", 1));
         return deck;
     }
 
