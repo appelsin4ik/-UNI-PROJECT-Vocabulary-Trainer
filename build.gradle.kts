@@ -1,4 +1,7 @@
-import org.apache.tools.ant.taskdefs.optional.jlink.jlink
+import org.beryx.jlink.JlinkTask
+import org.beryx.jlink.PrepareModulesDirTask
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import java.nio.file.Paths
 
 buildscript {
     repositories {
@@ -64,13 +67,13 @@ jlink {
     addExtraDependencies("javafx")
 
     // Point to the deobfuscated JAR instead of the regular build output
-    mergedModule {
-        enabled = false
-        additive = true
-        requires("javafx.controls")
-
-        //jarFiles.from(file("${layout.buildDirectory}/deobfuscated/app-deobf.jar"))
-    }
+//    mergedModule {
+//        enabled = false
+//        additive = true
+//        requires("javafx.controls")
+//
+//        //jarFiles.from(file("${layout.buildDirectory}/deobfuscated/app-deobf.jar"))
+//    }
 
     addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
     launcher {
@@ -78,24 +81,30 @@ jlink {
         noConsole = true
     }
 
-//    tasks.named("jlink").configure {
-//        dependsOn("proguard")
-//    }
-}
+    tasks.named("jlink").configure {
+        dependsOn("clean")
+    }
 
-// obfuscated and packaged run Task
-tasks.register<JavaExec>("run-production") {
-    val jlinkTask = tasks.named("jlink")
-    dependsOn(jlinkTask)
+    tasks.named<PrepareModulesDirTask>("prepareModulesDir").configure {
+        dependsOn("proguard")
 
-    doFirst {
-//        logger.lifecycle("ProGuard output files:")
-//        jlinkTask.get().outputs.files.forEach { logger.lifecycle(" - ${it.absolutePath}") }
+        doLast {
+            val proguardTask = tasks.named<proguard.gradle.ProGuardTask>("proguard")
+            val jarTask = tasks.named<Jar>("jar")
+            //proguardTask.get().outJarFiles
 
-        val outputJar = jlinkTask.get().outputs.files.files.find { it.extension == "jar" }
-            ?: throw GradleException("No JAR file found in Task outputs.")
-        mainClass.set("-jar")
-        args = listOf(outputJar.absolutePath)
+            val obfuscatedJar = proguardTask.get().outputs.files.files.find { it.extension == "jar" }
+                ?: throw GradleException("No JAR file found in Task outputs.")
+
+            val normalJar = jarTask.get().outputs.files.files.find { it.extension == "jar" }
+                ?: throw GradleException("No JAR file found in Task outputs.")
+
+            copy {
+                from(obfuscatedJar)
+                into(jlinkJarsDir)
+                rename { normalJar.name }
+            }
+        }
     }
 }
 
@@ -104,14 +113,12 @@ tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = application.mainClass
     }
-
-//    var proguardTask = tasks.named("proguard")
-//    dependsOn("proguard")
 }
 
 // https://github.com/Guardsquare/proguard/blob/ef6a8352bdbbf233e21a9dee5e5f9ac394cb7fc3/examples/gradle-kotlin-dsl/build.gradle.kts
 tasks.register<proguard.gradle.ProGuardTask>("proguard") {
     verbose()
+    ignorewarnings()
 
     // Use the jar task output as a input jar. This will automatically add the necessary task dependency.
     injars(tasks.named("jar"))
@@ -132,20 +139,63 @@ tasks.register<proguard.gradle.ProGuardTask>("proguard") {
             "$javaHome/jmods/java.base.jmod"
         )
     }
-    ignorewarnings()
 
-    allowaccessmodification()
-
+    //allowaccessmodification()
     repackageclasses("")
 
     printmapping("build/proguard-mapping.txt")
 
-    keep("""class ${application.mainClass.get()} {
-                public static void main(java.lang.String[]);
-            }
-            class javafx.** { *; }
+    adaptresourcefilecontents("**.fxml,**.properties,META-INF/MANIFEST.MF")
+
+    keeppackagenames()
+    keep("class module-info")
+    keep("""
+        class ${application.mainClass.get()} {
+            public static void main(java.lang.String[]);
+            public void start(javafx.stage.Stage);
+        }
+    """)
+//    keep("""
+//        class javafx.** { *; }
+//        class ** extends javafx.** {  }
+//    """)
+//    keepclassmembers("""
+//        class * {
+//            @java.lang.Overwrite *;
+//            @java.lang.Overwrite public *** *(**);
+//        }
+//    """)
+    keepattributes("Module*")
+    keepattributes("Override")
+    keepattributes("""
+        Signature,Exceptions,*Annotation*,
+        InnerClasses,PermittedSubclasses,EnclosingMethod,
+        Deprecated,SourceFile,LineNumberTable,
     """)
 
     // output Dateien an andere Tasks übergeben
     outputs.file(outJarFiles)
+}
+
+// obfuscated and packaged run Task
+tasks.register<Exec>("run-production") {
+    val jlinkTask = tasks.named<JlinkTask>("jlink")
+    dependsOn(jlinkTask)
+
+    doFirst {
+        //jlinkTask.get().outputs.files.forEach { logger.lifecycle(" - ${it.absolutePath}") }
+
+        var cwd = Paths.get(jlinkTask.get().outputs.files.first().toString(), "bin")
+        logger.lifecycle("cwd: $cwd")
+        var launcher = jlinkTask.get().launcherData.name
+
+        workingDir = cwd.toFile()
+        val os = DefaultNativePlatform.getCurrentOperatingSystem()
+        if (os.isWindows) {
+            commandLine = listOf("cmd.exe", "/d", "/c", launcher.toString())
+        } else {
+            // noch nicht getestet!
+            commandLine = listOf(launcher.toString())
+        }
+    }
 }
