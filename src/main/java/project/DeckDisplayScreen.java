@@ -1,6 +1,5 @@
 package project;
 
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,22 +9,22 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 
-public class DeckDisplayScreen extends Application {
+/**
+ *
+ */
+public class DeckDisplayScreen extends VBox {
 
     private DeckManager deckManager;
-    private Stage stage;
 
-    public DeckDisplayScreen(DeckManager deckManager, Stage stage) {
+    private Scene scene;
+
+    public DeckDisplayScreen(DeckManager deckManager) {
+        super(10);
         this.deckManager = deckManager;
-        this.stage = stage;
-    }
 
-    @Override
-    public void start(Stage stage) {
         // Create the main layout
-        VBox mainLayout = new VBox(10);
-        mainLayout.setPadding(new Insets(15));
-        mainLayout.setBackground(new Background(new BackgroundFill(
+        this.setPadding(new Insets(15));
+        this.setBackground(new Background(new BackgroundFill(
                 Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         // Add title
@@ -68,21 +67,17 @@ public class DeckDisplayScreen extends Application {
         }
 
         // Set up the scene
-        mainLayout.getChildren().addAll(title, deckContainer);
-        stage.setScene(new Scene(mainLayout, 800, 600));
-        stage.setTitle("Vocabulary Learner");
-        stage.show();
-    }
+        getChildren().addAll(title, deckContainer);
 
-    private void showCardScreen(Deck deck) {
-        CardViewScreen cardView = new CardViewScreen(deck, stage, this::show);
-        cardView.show();
+        scene = new Scene(this, 800, 600);
     }
 
     public void show() {
-//        VBox mainLayout = createDeckDisplay();
-//        stage.setScene(new Scene(mainLayout, 800, 600));
-        start(stage);
+        Main.getStage().setScene(scene);
     }
 
+    private void showCardScreen(Deck deck) {
+        CardViewScreen cardView = new CardViewScreen(deck, this::show);
+        cardView.show();
+    }
 }

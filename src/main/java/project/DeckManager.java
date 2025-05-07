@@ -4,9 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Manager für alle Karten Decks
+ */
 public class DeckManager {
+    /** liste aller geladenen Karten Decks */
     private List<Deck> decks;
 
+    /**
+     * DeckManager Constructor
+     */
     public DeckManager() {
         decks = Arrays.asList(
                 createBasicVocabularyDeck(),
@@ -15,6 +22,9 @@ public class DeckManager {
         );
     }
 
+    /**
+     * Simples Beispiel Deck erstellen
+     */
     private Deck createBasicVocabularyDeck() {
         Deck deck = new Deck("Basic Vocabulary");
         deck.addCard(new Card("Hello", "Bonjour", 1));
@@ -26,6 +36,9 @@ public class DeckManager {
         return deck;
     }
 
+    /**
+     * Complexeres Beispiel Deck erstellen
+     */
     private Deck createAdvancedVocabularyDeck() {
         Deck deck = new Deck("Advanced Vocabulary");
         deck.addCard(new Card("Nevertheless", "Néanmoins", 3));
@@ -35,6 +48,9 @@ public class DeckManager {
         return deck;
     }
 
+    /**
+     * Beispiel Deck mit Thema Essen erstellen
+     */
     private Deck createFoodVocabularyDeck() {
         Deck deck = new Deck("Food Vocabulary");
         deck.addCard(new Card("Apple", "Pomme", 1));
@@ -46,6 +62,10 @@ public class DeckManager {
         return deck;
     }
 
+    /**
+     * getter für Decks
+     * @return alle Decks
+     */
     public List<Deck> getDecks() {
         return decks;
     }

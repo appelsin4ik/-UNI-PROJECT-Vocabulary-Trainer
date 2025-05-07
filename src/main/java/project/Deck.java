@@ -8,10 +8,16 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+/**
+ * Deck an Karten
+ */
 public class Deck {
-    private List<Card> cards;
+    /** Name dieses Decks */
     private String name;
+    /** Liste aller Karten in diesem Deck */
+    private List<Card> cards;
 
+    /** neues leeres Deck erstellen */
     public Deck(String name) {
         this.name = name;
         this.cards = new ArrayList<Card>();
@@ -29,7 +35,7 @@ public class Deck {
     }
 
     /**
-     * läd ein neues Dech als Json aus einer Datei
+     * lädt ein neues Deck als Json aus einer Datei
      * @param filepath Pfad der Datei aus der geladen wird
      * @return das geladene Deck
      */
@@ -56,18 +62,30 @@ public class Deck {
         mapper.writeValue(file, this);
     }
 
-    public void AddCard(String vocabulary, String translation) {
-        Card newCard = new Card(vocabulary, translation, 1);
-        cards.add(newCard);
-    }
+    /**
+     * Karte zu Deck hinzufügen
+     */
     public void addCard(Card card) {
         cards.add(card);
     }
+    /**
+     * Karte zu Deck hinzufügen
+     */
+    public void addCard(String vocabulary, String translation) {
+        Card newCard = new Card(vocabulary, translation, 1);
+        cards.add(newCard);
+    }
 
+    /**
+     * getter von Deck Name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * getter für Deck Karten
+     */
     public List<Card> getCards() {
         return cards;
     }

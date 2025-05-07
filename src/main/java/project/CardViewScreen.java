@@ -7,20 +7,28 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class CardViewScreen {
+/**
+ * View für Karten eines Decks
+ */
+public class CardViewScreen extends VBox {
     private Deck deck;
-    private Stage stage;
     private Runnable onBack;
 
-    public CardViewScreen(Deck deck, Stage stage, Runnable onBack) {
+    /**
+     * View Constructor
+     */
+    public CardViewScreen(Deck deck, Runnable onBack) {
+        super(10);
+
         this.deck = deck;
-        this.stage = stage;
         this.onBack = onBack;
     }
 
+    /**
+     * View anzeigen
+     */
     public void show() {
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(15));
+        this.setPadding(new Insets(15));
 
         Button backButton = new Button("← Back to Decks");
         backButton.setOnAction(e -> onBack.run());
@@ -34,7 +42,7 @@ public class CardViewScreen {
             cardList.getChildren().add(cardLabel);
         }
 
-        layout.getChildren().addAll(backButton, title, cardList);
-        stage.setScene(new Scene(layout, 800, 600));
+        this.getChildren().addAll(backButton, title, cardList);
+        Main.getStage().setScene(new Scene(this, 800, 600));
     }
 }
