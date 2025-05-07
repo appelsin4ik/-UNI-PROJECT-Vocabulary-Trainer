@@ -123,6 +123,9 @@ public class DeckDisplayScreen extends Application {
             VBox deckBox = createDeckBox(deck);
             deckContainer.getChildren().add(deckBox);
         }
+        // Add "Add Deck" card
+        VBox addDeckBox = createAddDeckBox();
+        deckContainer.getChildren().add(addDeckBox);
 
         content.getChildren().addAll(title, deckContainer);
         return content;
@@ -155,6 +158,39 @@ public class DeckDisplayScreen extends Application {
         CardViewScreen cardView = new CardViewScreen(deck, stage, this::show);
         cardView.show();
     }
+
+    private VBox createAddDeckBox() {
+        VBox addDeckBox = new VBox();
+        addDeckBox.setAlignment(Pos.CENTER);
+        addDeckBox.setPadding(new Insets(15));
+        addDeckBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+        addDeckBox.setMinWidth(235);
+        addDeckBox.setMinHeight(150); // Match height of other deck boxes
+
+        // Create big plus icon
+        FontAwesomeIconView plusIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS);
+        plusIcon.setSize("50px");
+        plusIcon.setFill(Color.web("#7f8c8d")); // Gray color
+
+        // Make the whole box clickable
+        addDeckBox.setOnMouseClicked(e -> addNewDeck());
+        addDeckBox.setOnMouseEntered(e -> {
+            addDeckBox.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 10; " +
+                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+            plusIcon.setFill(Color.web("#3498db")); // Blue color on hover
+        });
+        addDeckBox.setOnMouseExited(e -> {
+            addDeckBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; " +
+                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 1);");
+            plusIcon.setFill(Color.web("#7f8c8d")); // Gray color
+        });
+
+        addDeckBox.getChildren().add(plusIcon);
+        return addDeckBox;
+    }
+
+    private void addNewDeck() {}
 
     public void show() {
         start(stage);
