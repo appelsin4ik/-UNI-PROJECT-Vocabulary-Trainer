@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Manager für alle Karten Decks
+ * Manager für alle Karten Decks (Datenmodel)
  */
 public class DeckManager {
     /** liste aller geladenen Karten Decks */

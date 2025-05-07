@@ -10,14 +10,19 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 
 /**
- *
+ * Screen im Decks anzuzeigen
  */
 public class DeckDisplayScreen extends VBox {
 
+    /** deck Daten Model */
     private DeckManager deckManager;
 
+    /** Scene in der dieser Screen angezeigt wird */
     private Scene scene;
 
+    /**
+     * Constructor dieses Screens
+     */
     public DeckDisplayScreen(DeckManager deckManager) {
         super(10);
         this.deckManager = deckManager;
@@ -72,10 +77,17 @@ public class DeckDisplayScreen extends VBox {
         scene = new Scene(this, 800, 600);
     }
 
+    /**
+     * diesen Screen anzeigen
+     */
     public void show() {
         Main.getStage().setScene(scene);
     }
 
+    /**
+     * zum Card Screen wechseln
+     * @param deck Deck welches angezeigt wird
+     */
     private void showCardScreen(Deck deck) {
         CardViewScreen cardView = new CardViewScreen(deck, this::show);
         cardView.show();

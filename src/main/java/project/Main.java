@@ -18,6 +18,9 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * getter für App Fenster Stage
+     */
     public static Stage getStage() {
         return Main.stage;
     }
