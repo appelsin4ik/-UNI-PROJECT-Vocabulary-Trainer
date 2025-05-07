@@ -81,9 +81,9 @@ jlink {
         noConsole = true
     }
 
-    tasks.named("jlink").configure {
-        dependsOn("clean")
-    }
+//    tasks.named("jlink").configure {
+//        dependsOn("clean")
+//    }
 
     tasks.named<PrepareModulesDirTask>("prepareModulesDir").configure {
         dependsOn("proguard")
