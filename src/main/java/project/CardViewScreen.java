@@ -25,6 +25,10 @@ public class CardViewScreen {
     private boolean showTranslation = false;
     private Label cardContentLabel;
 
+    private Button leichtButton;
+    private Button mittelButton;
+    private Button schwerButton;
+
     public CardViewScreen(Deck deck, Stage stage, Runnable onBack) {
         this.deck = deck;
         this.stage = stage;
@@ -97,35 +101,69 @@ public class CardViewScreen {
         HBox difficultyBox = new HBox(20);
         difficultyBox.setAlignment(Pos.CENTER);
 
-        Button leichtButton = createDifficultyButton("Leicht", "#4CAF50");
+        leichtButton = createDifficultyButton("Leicht", "#4CAF50");
         leichtButton.setOnAction(e -> adjustCardWeight(-1));
 
-        Button mittelButton = createDifficultyButton("Mittel", "#FFC107");
-        mittelButton.setOnAction(e -> adjustCardWeight(1));
+        mittelButton = createDifficultyButton("Mittel", "#FFC107");
+        mittelButton.setOnAction(e -> adjustCardWeight(0));
 
-        Button schwerButton = createDifficultyButton("Schwer", "#F44336");
+        schwerButton = createDifficultyButton("Schwer", "#F44336");
         schwerButton.setOnAction(e -> adjustCardWeight(2));
 
         difficultyBox.getChildren().addAll(leichtButton, mittelButton, schwerButton);
         bottomBox.getChildren().addAll(toggleButton, difficultyBox);
         root.setBottom(bottomBox);
 
+        updateDifficultyButtons(); // Initialize button states
+
         stage.setScene(new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT));
     }
 
     private Button createDifficultyButton(String text, String color) {
         Button button = new Button(text);
-        button.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; " +
-                "-fx-text-fill: white; -fx-padding: 8px 16px; " +
-                "-fx-background-radius: 20px;");
-        button.setBackground(new Background(new BackgroundFill(
-                Color.web(color), new CornerRadii(20), Insets.EMPTY)));
+        button.setStyle(
+                "-fx-font-size: 16px; " +
+                        "-fx-font-weight: bold; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-padding: 8px 16px; " +
+                        "-fx-background-radius: 20px; " +
+                        "-fx-background-color: " + color + ";"
+        );
 
         // Hover effects
-        button.setOnMouseEntered(e -> button.setOpacity(0.8));
+        button.setOnMouseEntered(
+            e -> button.setOpacity(0.7)
+        );
         button.setOnMouseExited(e -> button.setOpacity(1.0));
 
         return button;
+    }
+
+    private String getBaseButtonStyle(String text, String color) {
+        String style = "-fx-font-size: 16px; " +
+                "-fx-font-weight: bold; " +
+                "-fx-text-fill: white; " +
+                "-fx-padding: 8px 16px; " +
+                "-fx-background-radius: 20px; " +
+                "-fx-background-color: " + color + ";";
+
+        // Add border if this is the selected button
+        if ((text.equals("Leicht") && deck.getCards().get(currentCardIndex).weight == 0) ||
+                (text.equals("Mittel") && (deck.getCards().get(currentCardIndex).weight == 1 ||
+                        deck.getCards().get(currentCardIndex).weight == 2)) ||
+                (text.equals("Schwer") && deck.getCards().get(currentCardIndex).weight > 2)) {
+            style += "-fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 20px;";
+        }
+
+        return style;
+    }
+
+    private void updateDifficultyButtons() {
+        int weight = deck.getCards().get(currentCardIndex).weight;
+
+        leichtButton.setStyle(getBaseButtonStyle("Leicht", "#4CAF50"));
+        mittelButton.setStyle(getBaseButtonStyle("Mittel", "#FFC107"));
+        schwerButton.setStyle(getBaseButtonStyle("Schwer", "#F44336"));
     }
 
     private void adjustCardWeight(int change) {
@@ -141,6 +179,7 @@ public class CardViewScreen {
 
         // You could add visual feedback here
         System.out.println("Card weight updated to: " + currentCard.weight);
+        updateDifficultyButtons(); // Initialize button states
     }
 
     private void navigateCard(int direction) {
@@ -149,6 +188,7 @@ public class CardViewScreen {
         if (currentCardIndex < 0) currentCardIndex = 0;
         if (currentCardIndex >= deck.getCards().size()) currentCardIndex = deck.getCards().size() - 1;
         updateCardDisplay();
+        updateDifficultyButtons(); // Initialize button states
     }
 
     private void updateCardDisplay() {

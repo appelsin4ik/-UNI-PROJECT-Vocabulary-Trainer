@@ -1,15 +1,16 @@
 package project;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class WeightingAlgorithm {
-    private Card[] cards;
+    private ArrayList<Card> cards;
 
-    public WeightingAlgorithm(Card[] cards) {
+    public WeightingAlgorithm(ArrayList<Card> cards) {
         this.cards = cards;
     }
 
     public void Sort() {
-        Arrays.sort(cards);
+        cards.sort(Card::compareTo);
     }
 }
