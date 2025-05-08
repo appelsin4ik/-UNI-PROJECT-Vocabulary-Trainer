@@ -1,14 +1,12 @@
 package project;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 
@@ -16,6 +14,9 @@ public class DeckDisplayScreen extends Application {
 
     private DeckManager deckManager;
     private Stage stage;
+
+    public DeckDisplayScreen () {
+    }
 
     public DeckDisplayScreen(DeckManager deckManager, Stage stage) {
         this.deckManager = deckManager;
@@ -28,9 +29,12 @@ public class DeckDisplayScreen extends Application {
         BorderPane root = new BorderPane();
         root.setStyle("-fx-background-color: #f5f5f5;");
 
-        // Create sidebar
-        VBox sidebar = createSidebar();
-        root.setLeft(sidebar);
+        // Add sidebar
+        root.setLeft(SidebarManager.getInstance().showSidebar());
+        SidebarManager.getInstance().getSettingsButton().setOnAction(e -> {
+            SidebarManager.getInstance().updateButton(SidebarManager.getInstance().getSettingsButton());
+            showSettingsScreen(stage);
+        });
 
         // Create main content area
         VBox content = createMainContent();
@@ -42,67 +46,9 @@ public class DeckDisplayScreen extends Application {
         stage.show();
     }
 
-    //Enthält die Funktionalität, um die Sidebar zu rendern
-    private VBox createSidebar() {
-        VBox sidebar = new VBox(10);
-        sidebar.setPadding(new Insets(20, 0, 0, 0));
-        sidebar.setStyle("-fx-background-color: #2c3e50;");
-        sidebar.setMinWidth(200);
-        sidebar.setPrefWidth(200);
-
-        // Sidebar title
-        Label sidebarTitle = new Label("Navigation");
-        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
-        sidebarTitle.setPadding(new Insets(0, 0, 20, 20));
-
-        // Navigation icons
-        FontAwesomeIconView tableIcon = new FontAwesomeIconView(FontAwesomeIcon.TABLE);
-        tableIcon.setSize("25px");
-        tableIcon.setFill(Color.WHITE);
-
-        FontAwesomeIconView barsIcon = new FontAwesomeIconView(FontAwesomeIcon.BARS);
-        barsIcon.setSize("25px");
-        barsIcon.setFill(Color.WHITE);
-
-        FontAwesomeIconView slidersIcon = new FontAwesomeIconView(FontAwesomeIcon.SLIDERS);
-        slidersIcon.setSize("25px");
-        slidersIcon.setFill(Color.WHITE);
-
-        FontAwesomeIconView cardsIcon = new FontAwesomeIconView(FontAwesomeIcon.STICKY_NOTE);
-        cardsIcon.setSize("25px");
-        cardsIcon.setFill(Color.WHITE);
-
-        //Navigation buttons
-        Button cardsButton = createNavButton( "Karten", cardsIcon);
-        Button decksButton = createNavButton("Decks", barsIcon);
-        Button managementButton = createNavButton("Karten-Verwaltung", tableIcon);
-        Button settingsButton = createNavButton("Einstellungen", slidersIcon);
-
-        // Add all elements to sidebar
-        sidebar.getChildren().addAll(
-                sidebarTitle,
-                cardsButton,
-                decksButton,
-                managementButton,
-                settingsButton
-        );
-
-        return sidebar;
-    }
-
-    //Erstellt die einzelnen Elemente der Sidebar (also z.B. Einstellungen, Karten etc.)
-    private Button createNavButton(String text, FontAwesomeIconView icon) {
-        Button button = new Button("  " + text, icon);
-        button.setPadding(new Insets(0, 0, 0, 0));
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setAlignment(Pos.BASELINE_LEFT);
-        button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: transparent; -fx-padding: 10px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: #34495e; -fx-padding: 10px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: transparent; -fx-padding: 10px;"));
-        return button;
+    private void showSettingsScreen(Stage stage) {
+        SettingsScreen settingView = new SettingsScreen(stage, this::show,this.deckManager,this);
+        settingView.show();
     }
 
     private VBox createMainContent() {
