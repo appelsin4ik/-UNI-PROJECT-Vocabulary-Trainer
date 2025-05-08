@@ -12,34 +12,45 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 
-public class DeckDisplayScreen extends Application {
+/**
+ * Screen im Decks anzuzeigen
+ */
+public class DeckDisplayScreen extends BorderPane {
 
+    /** deck Daten Model */
     private DeckManager deckManager;
-    private Stage stage;
 
-    public DeckDisplayScreen(DeckManager deckManager, Stage stage) {
+    /** Scene in der dieser Screen angezeigt wird */
+    private Scene scene;
+
+    /**
+     * Constructor dieses Screens
+     */
+    public DeckDisplayScreen(DeckManager deckManager) {
+        super();
         this.deckManager = deckManager;
-        this.stage = stage;
-    }
 
-    @Override
-    public void start(Stage stage) {
+        // UI im Konstruktor einmalig für diese Klasse konstruieren
         // Main layout with sidebar and content
-        BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color: #f5f5f5;");
+        this.setStyle("-fx-background-color: #f5f5f5;");
 
         // Create sidebar
         VBox sidebar = createSidebar();
-        root.setLeft(sidebar);
+        this.setLeft(sidebar);
 
         // Create main content area
         VBox content = createMainContent();
-        root.setCenter(content);
+        this.setCenter(content);
 
         // Set up the scene
-        stage.setScene(new Scene(root, 1000, 700)); // Increased width for sidebar
-        stage.setTitle("Vocabulary Learner");
-        stage.show();
+        scene = new Scene(this, 1000, 700);
+    }
+
+    /**
+     * diesen Screen anzeigen
+     */
+    public void show() {
+        Main.getStage().setScene(scene);
     }
 
     //Enthält die Funktionalität, um die Sidebar zu rendern
@@ -154,8 +165,12 @@ public class DeckDisplayScreen extends Application {
         return deckBox;
     }
 
+    /**
+     * zum Card Screen wechseln
+     * @param deck Deck welches angezeigt wird
+     */
     private void showCardScreen(Deck deck) {
-        CardViewScreen cardView = new CardViewScreen(deck, stage, this::show);
+        CardViewScreen cardView = new CardViewScreen(deck, this::show);
         cardView.show();
     }
 
@@ -191,8 +206,4 @@ public class DeckDisplayScreen extends Application {
     }
 
     private void addNewDeck() {}
-
-    public void show() {
-        start(stage);
-    }
 }

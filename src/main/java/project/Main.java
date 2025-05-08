@@ -2,29 +2,40 @@ package project;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
- * Main Application Class
+ * Main Application Class mit application Eintsiegspunkt
  */
 public class Main extends Application {
 
+    private static Stage stage;
 
+    /**
+     * main Einstiegspunkt
+     */
     public static void main(String[] args) {
-        System.out.println("Hello and welcome!");
-
-        launch();
+        launch(args);
     }
 
+    /**
+     * getter für App Fenster Stage
+     */
+    public static Stage getStage() {
+        return Main.stage;
+    }
+
+    /**
+     * JavaFX Application beginn
+     */
     @Override
     public void start(Stage stage) {
-        DeckManager deckManager = new DeckManager();
-        DeckDisplayScreen deckDisplay = new DeckDisplayScreen(deckManager, stage);
-        deckDisplay.start(stage);
+        Main.stage = stage;
+        stage.setTitle("Vocabulary Learner");
 
-//        stage.setTitle("Vocabulary Learner");
-//        stage.show();
+        DeckManager deckManager = new DeckManager();
+        DeckDisplayScreen deckDisplay = new DeckDisplayScreen(deckManager);
+        deckDisplay.show();
+        stage.show();
     }
 }

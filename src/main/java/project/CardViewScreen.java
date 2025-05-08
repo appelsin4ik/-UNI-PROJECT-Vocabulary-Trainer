@@ -13,7 +13,10 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-public class CardViewScreen {
+/**
+ * View für Karten eines Decks
+ */
+public class CardViewScreen extends BorderPane {
     // Screen dimensions as global constants
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 600;
@@ -21,7 +24,6 @@ public class CardViewScreen {
     private static final int CARD_HEIGHT = 300;
 
     private Deck deck;
-    private Stage stage;
     private Runnable onBack;
     private int currentCardIndex = 0;
     private boolean showTranslation = false;
@@ -31,16 +33,18 @@ public class CardViewScreen {
     private Button mittelButton;
     private Button schwerButton;
 
-    public CardViewScreen(Deck deck, Stage stage, Runnable onBack) {
-        this.deck = deck;
-        this.stage = stage;
-        this.onBack = onBack;
-    }
+    /**
+     * View Constructor
+     */
+    public CardViewScreen(Deck deck, Runnable onBack) {
+        super();
 
-    public void show() {
-        BorderPane root = new BorderPane();
-        root.setPadding(new Insets(20));
-        root.setStyle("-fx-background-color: #f5f5f5;");
+        this.deck = deck;
+        this.onBack = onBack;
+
+        // UI im Konstruktor einmalig für diese Klasse konstruieren
+        this.setPadding(new Insets(20));
+        this.setStyle("-fx-background-color: #f5f5f5;");
 
         FontAwesomeIconView backIcon = new FontAwesomeIconView(FontAwesomeIcon.ARROW_LEFT);
         backIcon.setSize("16px");
@@ -49,7 +53,7 @@ public class CardViewScreen {
         Button backButton = new Button("Back to Decks", backIcon);
         backButton.setStyle("-fx-font-size: 14px;");
         backButton.setOnAction(e -> onBack.run());
-        root.setTop(backButton);
+        this.setTop(backButton);
 
         // Center area with card and navigation
         HBox centerBox = new HBox(20);
@@ -83,7 +87,7 @@ public class CardViewScreen {
         nextButton.setOnAction(e -> navigateCard(1));
 
         centerBox.getChildren().addAll(prevButton, cardBox, nextButton);
-        root.setCenter(centerBox);
+        this.setCenter(centerBox);
 
         // Bottom area with toggle and difficulty buttons
         VBox bottomBox = new VBox(20);
@@ -113,11 +117,16 @@ public class CardViewScreen {
 
         difficultyBox.getChildren().addAll(leichtButton, mittelButton, schwerButton);
         bottomBox.getChildren().addAll(toggleButton, difficultyBox);
-        root.setBottom(bottomBox);
+        this.setBottom(bottomBox);
 
         updateDifficultyButtons(); // Initialize button states
+    }
 
-        stage.setScene(new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT));
+    /**
+     * View anzeigen
+     */
+    public void show() {
+        Main.getStage().setScene(new Scene(this, SCREEN_WIDTH, SCREEN_HEIGHT));
     }
 
     private Button createDifficultyButton(String text, String color) {

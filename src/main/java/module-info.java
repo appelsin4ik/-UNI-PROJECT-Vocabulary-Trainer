@@ -2,6 +2,9 @@ module project.main {
     requires javafx.controls;
     requires javafx.graphics;
     requires de.jensd.fx.glyphs.fontawesome;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.annotation;
 
     opens project to javafx.graphics;
     exports project;
