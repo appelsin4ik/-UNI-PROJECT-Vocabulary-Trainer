@@ -1,5 +1,7 @@
 package project;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -7,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 
@@ -14,9 +17,6 @@ public class DeckDisplayScreen extends Application {
 
     private DeckManager deckManager;
     private Stage stage;
-
-    public DeckDisplayScreen () {
-    }
 
     public DeckDisplayScreen(DeckManager deckManager, Stage stage) {
         this.deckManager = deckManager;
