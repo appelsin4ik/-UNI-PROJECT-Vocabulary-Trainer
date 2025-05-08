@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -34,9 +35,13 @@ public class DeckDisplayScreen extends BorderPane {
         // Main layout with sidebar and content
         this.setStyle("-fx-background-color: #f5f5f5;");
 
-        // Create sidebar
-        VBox sidebar = createSidebar();
-        this.setLeft(sidebar);
+        // Add sidebar
+        var sidebarManager = SidebarManager.getInstance();
+        this.setLeft(sidebarManager.showSidebar());
+        sidebarManager.getSettingsButton().setOnAction(e -> {
+            sidebarManager.updateButton(sidebarManager.getSettingsButton());
+            showSettingsScreen();
+        });
 
         // Create main content area
         VBox content = createMainContent();
@@ -53,67 +58,9 @@ public class DeckDisplayScreen extends BorderPane {
         Main.getStage().setScene(scene);
     }
 
-    //Enthält die Funktionalität, um die Sidebar zu rendern
-    private VBox createSidebar() {
-        VBox sidebar = new VBox(10);
-        sidebar.setPadding(new Insets(20, 0, 0, 0));
-        sidebar.setStyle("-fx-background-color: #2c3e50;");
-        sidebar.setMinWidth(200);
-        sidebar.setPrefWidth(200);
-
-        // Sidebar title
-        Label sidebarTitle = new Label("Navigation");
-        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
-        sidebarTitle.setPadding(new Insets(0, 0, 20, 20));
-
-        // Navigation icons
-        FontAwesomeIconView tableIcon = new FontAwesomeIconView(FontAwesomeIcon.TABLE);
-        tableIcon.setSize("25px");
-        tableIcon.setFill(Color.WHITE);
-
-        FontAwesomeIconView barsIcon = new FontAwesomeIconView(FontAwesomeIcon.BARS);
-        barsIcon.setSize("25px");
-        barsIcon.setFill(Color.WHITE);
-
-        FontAwesomeIconView slidersIcon = new FontAwesomeIconView(FontAwesomeIcon.SLIDERS);
-        slidersIcon.setSize("25px");
-        slidersIcon.setFill(Color.WHITE);
-
-        FontAwesomeIconView cardsIcon = new FontAwesomeIconView(FontAwesomeIcon.STICKY_NOTE);
-        cardsIcon.setSize("25px");
-        cardsIcon.setFill(Color.WHITE);
-
-        //Navigation buttons
-        Button cardsButton = createNavButton( "Karten", cardsIcon);
-        Button decksButton = createNavButton("Decks", barsIcon);
-        Button managementButton = createNavButton("Karten-Verwaltung", tableIcon);
-        Button settingsButton = createNavButton("Einstellungen", slidersIcon);
-
-        // Add all elements to sidebar
-        sidebar.getChildren().addAll(
-                sidebarTitle,
-                cardsButton,
-                decksButton,
-                managementButton,
-                settingsButton
-        );
-
-        return sidebar;
-    }
-
-    //Erstellt die einzelnen Elemente der Sidebar (also z.B. Einstellungen, Karten etc.)
-    private Button createNavButton(String text, FontAwesomeIconView icon) {
-        Button button = new Button("  " + text, icon);
-        button.setPadding(new Insets(0, 0, 0, 0));
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setAlignment(Pos.BASELINE_LEFT);
-        button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: transparent; -fx-padding: 10px;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: #34495e; -fx-padding: 10px;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: transparent; -fx-padding: 10px;"));
-        return button;
+    private void showSettingsScreen() {
+        SettingsScreen settingView = new SettingsScreen(this::show, this.deckManager,this);
+        settingView.show();
     }
 
     private VBox createMainContent() {
