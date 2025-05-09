@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 /**
  * Deck an Karten
@@ -106,11 +107,9 @@ public class Deck {
      * @return jackson ObjectMapper
      */
     public static ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // ObjectMapper für pretty print convertieren
-        //objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        return objectMapper;
+        return JsonMapper.builder()
+            // ObjectMapper für pretty print convertieren
+            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true).build();
     }
 
     /**
