@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -13,11 +16,16 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class Deck {
     /** Name dieses Decks */
+    @JsonProperty("name")
     private String name;
     /** Liste aller Karten in diesem Deck */
+    @JsonProperty("cards")
     private List<Card> cards;
 
     /** neues leeres Deck erstellen */
+    public Deck() {
+        this.cards = new ArrayList<>();
+    }
     public Deck(String name) {
         this.name = name;
         this.cards = new ArrayList<Card>();
@@ -101,6 +109,7 @@ public class Deck {
         ObjectMapper objectMapper = new ObjectMapper();
         // ObjectMapper für pretty print convertieren
         //objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         return objectMapper;
     }
 

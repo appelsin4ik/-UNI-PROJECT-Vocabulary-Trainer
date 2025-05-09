@@ -219,7 +219,7 @@ public class DeckDisplayScreen extends BorderPane {
                 } else {
                     deckManager.addDeck(importedDeck);
                     importedDeck.save();
-
+                    refreshContent();
                     show();
                 }
             } catch (IOException e) {
@@ -228,5 +228,9 @@ public class DeckDisplayScreen extends BorderPane {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void refreshContent() {
+        this.setCenter(createMainContent()); // Recreate and set the content
     }
 }

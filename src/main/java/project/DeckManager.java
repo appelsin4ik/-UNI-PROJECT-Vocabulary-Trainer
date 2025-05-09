@@ -15,12 +15,12 @@ public class DeckManager {
      * DeckManager Constructor
      */
     public DeckManager() {
-        decks = Arrays.asList(
+        this.decks = new ArrayList<>(Arrays.asList(
                 createBasicVocabularyDeck(),
                 createAdvancedVocabularyDeck(),
                 createFoodVocabularyDeck(),
                 createDummyVocabularyDeck()
-        );
+        ));
     }
 
     /**
