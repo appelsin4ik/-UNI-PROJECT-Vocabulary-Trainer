@@ -29,6 +29,7 @@ public class DeckDisplayScreen extends BorderPane {
 
     /**
      * Constructor dieses Screens
+     * @param deckManager deckmanager mit Decks die angezeigt werden
      */
     public DeckDisplayScreen(DeckManager deckManager) {
         super();

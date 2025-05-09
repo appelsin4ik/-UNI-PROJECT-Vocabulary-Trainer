@@ -14,16 +14,33 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 
+/**
+ * Einstellungsbildschirm der Anwendung
+ */
 public class SettingsScreen extends BorderPane {
+    /** Callback-Funktion für die Zurück-Navigation */
     private Runnable onBack;
+    /** Manager für die Verwaltung von Kartendecks */
     private DeckManager deckManager;
+    /** Bildschirm zur Anzeige von Decks */
     private DeckDisplayScreen deckDisplayScreen;
+    /** Hauptszene des Einstellungsbildschirms */
     private Scene scene;
 
+    /** ComboBox für die Auswahl des Themes (Light/Dark Mode) */
     private static ComboBox<String> themeSelector;
+    /** Button zur Dateiauswahl für den Import */
     private  Button fileSelectButton;
+    /** Label für den Import-Bereich */
     private  Label importLabel;
 
+    /**
+     * Konstruktor für den Einstellungsbildschirm.
+     *
+     * @param onBack Callback-Funktion für die Zurück-Navigation
+     * @param deckManager Manager für die Deck-Verwaltung
+     * @param deckDisplayScreen Bildschirm zur Anzeige von Decks
+     */
     public SettingsScreen(Runnable onBack, DeckManager deckManager, DeckDisplayScreen deckDisplayScreen) {
         //this.deckManager = deckManager;
         this.onBack = onBack;
@@ -65,11 +82,18 @@ public class SettingsScreen extends BorderPane {
         scene = new Scene(this, 1000, 700);
     }
 
-
+    /**
+     * Zeigt den Einstellungsbildschirm im Hauptfenster an.
+     */
     public void show() {
         Main.getStage().setScene(scene);
     }
 
+    /**
+     * Erstellt das Layout für den Einstellungsbildschirm.
+     *
+     * @return VBox Container mit allen UI-Elementen der Einstellungen
+     */
     public VBox createSettingsScene() {
         // Root-Layout
         VBox root = new VBox(20);
@@ -114,6 +138,9 @@ public class SettingsScreen extends BorderPane {
         return root;
     }
 
+    /**
+     * Öffnet einen FileChooser-Dialog zur Auswahl einer JSON-Datei für den Deck-Import.
+     */
     private void chooseFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("JSON-Datei auswählen");
@@ -126,11 +153,17 @@ public class SettingsScreen extends BorderPane {
         }
     }
 
+    /**
+     * Wechselt zur Deck-Anzeige.
+     */
     private void showDeckScreen() {
         DeckDisplayScreen deckView = new DeckDisplayScreen(deckManager);
         deckView.show();
     }
 
+    /**
+     * Zeigt eine Warnung für nicht implementierte Funktionen an.
+     */
     public static void showWarning() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");

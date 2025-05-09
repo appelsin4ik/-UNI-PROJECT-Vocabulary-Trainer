@@ -130,6 +130,7 @@ public class CardViewScreen extends BorderPane {
     public void show() {
         Main.getStage().setScene(new Scene(this, SCREEN_WIDTH, SCREEN_HEIGHT));
     }
+
     /**
      * Erstellt einen der leicht, mittel oder schwer buttons, mit denen die Schwierigkeit der Karten angepasst
      * werden kann

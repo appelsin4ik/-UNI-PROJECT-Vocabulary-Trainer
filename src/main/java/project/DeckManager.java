@@ -83,6 +83,11 @@ public class DeckManager {
     public List<Deck> getDecks() {
         return decks;
     }
+
+    /**
+     * Deck zu Liste hinzufügen
+     * @param deck das neue Deck
+     */
     public void addDeck(Deck deck) {
         decks.add(deck);
     }

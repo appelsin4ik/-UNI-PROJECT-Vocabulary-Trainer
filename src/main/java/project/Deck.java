@@ -34,6 +34,7 @@ public class Deck {
 
     /**
      * getter von Deck Name
+     * @return Name des Decks
      */
     public String getName() {
         return name;
@@ -41,6 +42,7 @@ public class Deck {
 
     /**
      * getter für Deck Karten
+     * @return Karten des Decks
      */
     public List<Card> getCards() {
         return cards;
@@ -48,12 +50,15 @@ public class Deck {
 
     /**
      * Karte zu Deck hinzufügen
+     * @param card Karte die zu dem Deck hinzugefügt wird
      */
     public void addCard(Card card) {
         cards.add(card);
     }
     /**
      * Karte zu Deck hinzufügen
+     * @param vocabulary angezeigter Text
+     * @param translation zu erlernendes Ergebnis
      */
     public void addCard(String vocabulary, String translation) {
         Card newCard = new Card(vocabulary, translation, 1);

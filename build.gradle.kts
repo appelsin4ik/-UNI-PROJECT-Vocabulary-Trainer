@@ -85,6 +85,9 @@ jlink {
         noConsole = true
     }
 
+    tasks.named("jlinkZip").configure {
+        dependsOn("clean")
+    }
 //    tasks.named("jlink").configure {
 //        dependsOn("clean")
 //    }
