@@ -38,10 +38,32 @@ public class DeckDisplayScreen extends BorderPane {
         // Add sidebar
         var sidebarManager = SidebarManager.getInstance();
         this.setLeft(sidebarManager.showSidebar());
-        sidebarManager.getSettingsButton().setOnAction(e -> {
-            sidebarManager.updateButton(sidebarManager.getSettingsButton());
-            showSettingsScreen();
-        });
+
+        // Action
+        for(Button b : sidebarManager.getButtons()) {
+
+            b.setOnAction(e -> {
+                switch (b.getText().trim()){
+                    case "Karten":
+                        SettingsScreen.showWarning();
+                        break;
+                    // NEED to be DONE
+
+                    case "Karten-Verwaltung":
+                        SettingsScreen.showWarning();
+                        break;
+                    // NEED to be DONE
+                    case "Einstellungen":
+                        sidebarManager.updateButton(sidebarManager.getSettingsButton());
+                        showSettingsScreen();
+                        break;
+
+                    default:
+                        break;
+                }
+            });
+
+        }
 
         // Create main content area
         VBox content = createMainContent();

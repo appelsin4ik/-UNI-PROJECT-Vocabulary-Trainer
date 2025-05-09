@@ -40,14 +40,12 @@ public class SettingsScreen extends BorderPane {
             b.setOnAction(e -> {
                 switch (b.getText().trim()){
                     case "Karten":
-                        sidebarManager.updateButton(sidebarManager.getCardsButton());
                         showWarning();
                         break;
                     // NEED to be DONE
 
                     case "Karten-Verwaltung":
-                        sidebarManager.updateButton(sidebarManager.getManagementButton());
-                        showCardManagerScreen();
+                        showWarning();
                         break;
                     // NEED to be DONE
                     case "Decks":
@@ -133,16 +131,11 @@ public class SettingsScreen extends BorderPane {
         deckView.show();
     }
 
-    private void showCardManagerScreen() {
-        DeckManagerScreen deckView = new DeckManagerScreen(Main.getStage());
-        deckView.show();
-    }
-
-    public void showWarning() {
+    public static void showWarning() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");
-        alert.setHeaderText("Dieses Menu braucht noch einen Screen");
-        alert.setContentText("Wäre super lieb wenn jemand das machen würde :=)");
+        alert.setHeaderText("Das Menu ist noch in Arbeit");
+        alert.setContentText("Wartet auf updates :=)");
         alert.showAndWait();
     }
 }
