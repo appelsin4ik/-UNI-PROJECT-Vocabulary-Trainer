@@ -109,7 +109,7 @@ public class Deck {
      * @param file lesbare Datei
      * @return das geladene Deck
      */
-    private static Deck readFile(File file) throws IOException {
+    public static Deck readFile(File file) throws IOException {
         // ObjectMapper instance erstellen
         var mapper = Deck.getObjectMapper();
         // json string mit ObjectMapper zu object convertieren

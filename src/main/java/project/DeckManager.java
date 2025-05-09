@@ -83,4 +83,7 @@ public class DeckManager {
     public List<Deck> getDecks() {
         return decks;
     }
+    public void addDeck(Deck deck) {
+        decks.add(deck);
+    }
 }

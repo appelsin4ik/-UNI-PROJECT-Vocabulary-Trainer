@@ -5,6 +5,8 @@ import javafx.stage.Stage;
 import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -26,6 +28,19 @@ public class Main extends Application {
         userDataPath = Path.of(appDirs.getUserDataDir("se-project", "1.0.0", "projekt-gruppe"));
         System.out.printf("Userdata Folder: %s", userDataPath);
 
+        try {
+            // Check if path already exists
+            if (!Files.exists(userDataPath)) {
+                // Create directory only if it doesn't exist
+                Files.createDirectories(userDataPath);
+                System.out.println("Created userdata folder: " + userDataPath.toAbsolutePath());
+            } else {
+                System.out.println("Using existing userdata folder: " + userDataPath.toAbsolutePath());
+            }
+        } catch (IOException e) {
+            System.err.println("FATAL: Could not initialize userdata folder: " + e.getMessage());
+            System.exit(1);
+        }
         launch(args);
     }
 

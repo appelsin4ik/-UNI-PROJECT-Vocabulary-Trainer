@@ -35,6 +35,8 @@ public class CardViewScreen extends BorderPane {
 
     /**
      * View Constructor
+     * @param deck Das Deck, das abgefragt werden soll
+     * @param onBack Runnable, mit dem zurück zum Deck Screen navigiert wird
      */
     public CardViewScreen(Deck deck, Runnable onBack) {
         super();
@@ -128,7 +130,10 @@ public class CardViewScreen extends BorderPane {
     public void show() {
         Main.getStage().setScene(new Scene(this, SCREEN_WIDTH, SCREEN_HEIGHT));
     }
-
+    /**
+     * Erstellt einen der leicht, mittel oder schwer buttons, mit denen die Schwierigkeit der Karten angepasst
+     * werden kann
+     */
     private Button createDifficultyButton(String text, String color) {
         Button button = new Button(text);
         button.setStyle(

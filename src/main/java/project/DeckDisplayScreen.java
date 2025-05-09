@@ -12,6 +12,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.stage.FileChooser;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Screen im Decks anzuzeigen
@@ -110,7 +113,11 @@ public class DeckDisplayScreen extends BorderPane {
         content.getChildren().addAll(title, deckContainer);
         return content;
     }
-
+    /**
+     * Erstellt eine einzelne Deckbox. Über die Decks wird dann iteriert und für jedes Deck diese Methode
+     * aufgerufen um ein neues UI dafür zu erstellen.
+     * @param deck das Deck, zu dem die UI erstellt werden soll
+     */
     private VBox createDeckBox(Deck deck) {
         VBox deckBox = new VBox(10);
         deckBox.setAlignment(Pos.CENTER);
@@ -128,7 +135,9 @@ public class DeckDisplayScreen extends BorderPane {
         Button startButton = new Button("Start");
         startButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; " +
                 "-fx-text-fill: white; -fx-padding: 8px 16px;");
-        startButton.setOnAction(e -> showCardScreen(deck));
+        startButton.setOnAction(e -> {
+            showCardScreen(deck);
+        });
 
         deckBox.getChildren().addAll(deckName, cardCount, startButton);
         return deckBox;
@@ -143,6 +152,9 @@ public class DeckDisplayScreen extends BorderPane {
         cardView.show();
     }
 
+    /**
+     * Erstellt eine Deckbox mit einem großen Plus Icon, durch das neue Decks hinzugefügt werden können
+     */
     private VBox createAddDeckBox() {
         VBox addDeckBox = new VBox();
         addDeckBox.setAlignment(Pos.CENTER);
@@ -174,5 +186,47 @@ public class DeckDisplayScreen extends BorderPane {
         return addDeckBox;
     }
 
-    private void addNewDeck() {}
+    private void addNewDeck() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import Deck from JSON");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JSON Files", "*.json"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+
+        // Set initial directory (optional)
+        try {
+            File initialDir = Main.getUserdataPath().toFile();
+            if (initialDir.exists()) {
+                fileChooser.setInitialDirectory(initialDir);
+            }
+        } catch (Exception e) {
+            System.err.println("Couldn't set initial directory: " + e.getMessage());
+        }
+
+        // Show open file dialog
+        File selectedFile = fileChooser.showOpenDialog(Main.getStage());
+
+        if (selectedFile != null) {
+            try {
+                Deck importedDeck = Deck.readFile(selectedFile);
+
+                boolean deckExists = deckManager.getDecks().stream()
+                        .anyMatch(d -> d.getName().equals(importedDeck.getName()));
+
+                if (deckExists) {
+                    System.out.println("Deck with this name already exists!");
+                } else {
+                    deckManager.addDeck(importedDeck);
+                    importedDeck.save();
+
+                    show();
+                }
+            } catch (IOException e) {
+                System.err.println("Error importing deck: " + e.getMessage());
+
+                e.printStackTrace();
+            }
+        }
+    }
 }

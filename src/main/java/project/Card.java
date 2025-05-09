@@ -21,7 +21,8 @@ public class Card implements Comparable<Card>{
      * Karte constructor
      * @param vocabulary
      * @param translation
-     * @param weight
+     * @param weight wird benutzt, um die Karten bei der Abfrage später nach Schwierigkeit zu sortieren und
+     *               entsprechend öfter anzuzeigen
      */
     public Card(String vocabulary, String translation, int weight) {
         this.vocabulary = vocabulary;
