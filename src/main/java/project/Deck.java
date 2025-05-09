@@ -24,42 +24,17 @@ public class Deck {
     }
 
     /**
-     * ObjectMapper instance erstellen
-     * @return jackson ObjectMapper
+     * getter von Deck Name
      */
-    public static ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        // ObjectMapper für pretty print convertieren
-        //objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        return objectMapper;
+    public String getName() {
+        return name;
     }
 
     /**
-     * lädt ein neues Deck als Json aus einer Datei
-     * @param filepath Pfad der Datei aus der geladen wird
-     * @return das geladene Deck
+     * getter für Deck Karten
      */
-    public static Deck load(String filepath) throws IOException {
-        // json Datei Daten lesen
-        byte[] jsonData = Files.readAllBytes(Paths.get("employee.txt"));
-
-        // ObjectMapper instance erstellen
-        var mapper = Deck.getObjectMapper();
-        // json string mit ObjectMapper zu object convertieren
-        return mapper.readValue(jsonData, Deck.class);
-    }
-
-    /**
-     * dieses Deck als Json in einer Datei speichern
-     * @param filepath Pfad zu dieser Datei
-     */
-    public void save(String filepath) throws IOException {
-        // ObjectMapper instance erstellen
-        var mapper = Deck.getObjectMapper();
-
-        // dieses Deck in Datei schreiben
-        var file = new File(filepath);
-        mapper.writeValue(file, this);
+    public List<Card> getCards() {
+        return cards;
     }
 
     /**
@@ -77,16 +52,79 @@ public class Deck {
     }
 
     /**
-     * getter von Deck Name
+     * Umbenennung eines Decks
+     * @param newName neuer Name
+     * @return true wenn Erfolgreich, false wenn Umbenennen schiefgelaufen ist
      */
-    public String getName() {
-        return name;
+    public boolean setName(String newName) throws IOException {
+        var userdataPath = Main.getUserdataPath();
+        var oldFile = userdataPath.resolve(name + ".json").toFile();
+        if (oldFile.exists()) {
+            // alte Datei umbenennen
+            var newFile = userdataPath.resolve(newName + ".json").toFile();
+            // false zurückgeben wenn fehler
+            if (!oldFile.renameTo(newFile)) return false;
+        } else {
+            // neue Datei erstellen, wenn alte nicht existiert
+            var newFile = userdataPath.resolve(newName + ".json").toFile();
+            this.writeFile(newFile);
+        }
+        this.name = newName;
+        return true;
     }
 
     /**
-     * getter für Deck Karten
+     * lädt ein Deck als Json aus einer Datei
+     * @param name name des Decks
+     * @return das geladene Deck
      */
-    public List<Card> getCards() {
-        return cards;
+    public static Deck load(String name) throws IOException {
+        var userdataPath = Main.getUserdataPath();
+        var file = userdataPath.resolve(name + ".json").toFile();
+        return Deck.readFile(file);
+    }
+
+    /**
+     * Deck als Json in einer Datei speichern
+     */
+    public void save() throws IOException {
+        var userdataPath = Main.getUserdataPath();
+        var file = userdataPath.resolve(name + ".json").toFile();
+        this.writeFile(file);
+    }
+
+    /**
+     * ObjectMapper instance erstellen
+     * @return jackson ObjectMapper
+     */
+    public static ObjectMapper getObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        // ObjectMapper für pretty print convertieren
+        //objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        return objectMapper;
+    }
+
+    /**
+     * Deck als Json aus einer Datei lesen
+     * @param file lesbare Datei
+     * @return das geladene Deck
+     */
+    private static Deck readFile(File file) throws IOException {
+        // ObjectMapper instance erstellen
+        var mapper = Deck.getObjectMapper();
+        // json string mit ObjectMapper zu object convertieren
+        return mapper.readValue(file, Deck.class);
+    }
+
+    /**
+     * Deck als Json in eine Datei schreiben
+     * @param file schreibbare Datei
+     */
+    private void writeFile(File file) throws IOException {
+        // ObjectMapper instance erstellen
+        var mapper = Deck.getObjectMapper();
+
+        // Deck json in Datei schreiben
+        mapper.writeValue(file, this);
     }
 }

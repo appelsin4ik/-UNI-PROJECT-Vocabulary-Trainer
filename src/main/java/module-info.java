@@ -5,6 +5,8 @@ module project.main {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.annotation;
+    requires java.prefs;
+    requires net.harawata.appdirs;
 
     opens project to javafx.graphics;
     exports project;
