@@ -72,7 +72,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         Main.stage = stage;
-        stage.setTitle("Vocabulary Learner");
+        stage.setTitle("Pentalingo");
 
         DeckManager deckManager = new DeckManager();
         DeckDisplayScreen deckDisplay = new DeckDisplayScreen(deckManager);

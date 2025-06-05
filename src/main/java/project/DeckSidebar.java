@@ -10,6 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.*;
@@ -101,8 +104,9 @@ public class DeckSidebar extends VBox {
         sidebar.setPrefWidth(200);
 
         // Sidebar title
-        Label sidebarTitle = new Label("Navigation");
-        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;");
+        Label sidebarTitle = new Label("P e n t a l i n g o");
+        sidebarTitle.setFont(Font.font("K2D"));
+        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold;");
         sidebarTitle.setPadding(new Insets(0, 0, 20, 20));
 
 
@@ -161,8 +165,6 @@ public class DeckSidebar extends VBox {
         });
 
         button.setOnAction(e ->updateButton(button));
-
-
 
         return button;
     }
