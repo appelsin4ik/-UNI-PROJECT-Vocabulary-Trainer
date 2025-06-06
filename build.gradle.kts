@@ -127,6 +127,7 @@ tasks.withType<Jar> {
 tasks.register<proguard.gradle.ProGuardTask>("proguard") {
     verbose()
     ignorewarnings()
+    dontoptimize()
 
     // Use the jar task output as a input jar. This will automatically add the necessary task dependency.
     injars(tasks.named("jar"))

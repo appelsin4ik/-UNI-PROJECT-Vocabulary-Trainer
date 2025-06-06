@@ -142,9 +142,11 @@ public class SettingsScreen extends BorderPane {
         toggleBox.setPrefHeight(50);
         toggleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
+        var aboutButton = new Button("About");
+        aboutButton.setOnAction(e -> AboutDialog.show());
 
         // Alles zusammensetzen
-        root.getChildren().addAll(title,themeBox,importBox,toggleBox);
+        root.getChildren().addAll(title, themeBox, importBox, toggleBox, aboutButton);
 
         return root;
     }
