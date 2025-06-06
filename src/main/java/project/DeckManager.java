@@ -20,6 +20,7 @@ public class DeckManager {
 
     /**
      * DeckManager Constructor
+     * @param settings App Einstellungen
      */
     public DeckManager(AppSettings settings) {
         this.decks = new ArrayList<>();
@@ -32,6 +33,12 @@ public class DeckManager {
         loadDecks();
     }
 
+    /**
+     * Gibt die einzige Instanz des DeckManagers zurück (Singleton-Pattern).
+     * Falls noch keine Instanz existiert, wird eine neue mit den geladenen Einstellungen erstellt.
+     *
+     * @return die einzige Instanz des DeckManagers
+     */
     public static DeckManager getInstance() {
         if (instance == null) {
             instance = new DeckManager(SettingsIO.loadSettings());
@@ -40,6 +47,11 @@ public class DeckManager {
         return instance;
     }
 
+    /**
+     * Lädt alle Kartendecks aus JSON-Dateien im 'saves'-Verzeichnis.
+     * Erstellt das Verzeichnis, falls es nicht existiert.
+     * Ignoriert ungültige oder beschädigte JSON-Dateien.
+     */
     private void loadDecks() {
         File saveFolder = new File("saves");
         if (!saveFolder.exists()) {
@@ -64,7 +76,13 @@ public class DeckManager {
         }
     }
 
-
+    /**
+     * Exportiert ein Kartendeck als JSON-Datei in das 'saves'-Verzeichnis.
+     * Der Dateiname wird aus dem Deck-Namen generiert (nur alphanumerische Zeichen).
+     * Existierende Dateien werden nicht überschrieben.
+     *
+     * @param deck das zu exportierende Kartendeck
+     */
     public static void exportDeckToFile(Deck deck) {
         File saveFolder = new File("saves");
         if (!saveFolder.exists()) {
@@ -127,6 +145,12 @@ public class DeckManager {
         return deck;
     }
 
+    /**
+     * Erstellt ein Dummy-Kartendeck mit fortgeschrittenen Vokabeln zum Thema Essen.
+     * Dieses Deck enthält einige Duplikate und dient Testzwecken.
+     *
+     * @return ein neues Dummy-Kartendeck
+     */
     private Deck createDummyVocabularyDeck() {
         Deck deck = new Deck("Advanced Food Vocabulary");
         deck.addCard(new Card("Apple", "Pomme", 1));

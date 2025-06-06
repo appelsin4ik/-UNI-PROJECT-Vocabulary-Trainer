@@ -153,6 +153,12 @@ public class CardViewScreen extends BorderPane {
         return button;
     }
 
+    /**
+     * Erstellt den Basis-Stil für einen Schwierigkeitsgrad-Button
+     * @param text Der Buttontext ("Leicht", "Mittel" oder "Schwer")
+     * @param color Die Hintergrundfarbe des Buttons als Hex-Code
+     * @return Der komplette CSS-Stil als String
+     */
     private String getBaseButtonStyle(String text, String color) {
         String style = "-fx-font-size: 16px; " +
                 "-fx-font-weight: bold; " +
@@ -171,6 +177,10 @@ public class CardViewScreen extends BorderPane {
         return style;
     }
 
+    /**
+     * Aktualisiert den visuellen Zustand der Schwierigkeitsgrad-Buttons
+     * basierend auf dem aktuellen Gewicht der Karte
+     */
     private void updateDifficultyButtons() {
         int weight = deck.getCards().get(currentCardIndex).weight;
 
@@ -179,6 +189,11 @@ public class CardViewScreen extends BorderPane {
         schwerButton.setStyle(getBaseButtonStyle("Schwer", "#F44336"));
     }
 
+    /**
+     * Setzt das Gewicht (Schwierigkeitsgrad) der aktuellen Karte
+     * und sortiert das Deck entsprechend neu
+     * @param newWeight Das neue Gewicht (1=leicht, 2=mittel, 3=schwer)
+     */
     private void setCardWeight(int newWeight) {
         if (deck.getCards().isEmpty()) return;
 
@@ -198,6 +213,10 @@ public class CardViewScreen extends BorderPane {
         DeckDisplayScreen.saveDeckToFile(this.deck);
     }
 
+    /**
+     * Navigiert zur nächsten oder vorherigen Karte
+     * @param direction Richtung der Navigation (-1 für vorherige, +1 für nächste Karte)
+     */
     private void navigateCard(int direction) {
         showTranslation = false;
 
@@ -223,6 +242,12 @@ public class CardViewScreen extends BorderPane {
         printDeckDebugInfo();
     }
 
+    /**
+     * Findet den Index der nächsten Karte mit einem Gewicht > 0,
+     * beginnend vom gegebenen Startindex
+     * @param startIndex Der Index, ab dem gesucht werden soll
+     * @return Index der nächsten gewichteten Karte oder 0, falls keine gefunden
+     */
     private int findNextWeightedCard(int startIndex) {
         List<Card> cards = deck.getCards();
         for (int i = startIndex; i < cards.size(); i++) {
@@ -233,6 +258,12 @@ public class CardViewScreen extends BorderPane {
         return 0; // Fallback to first card if none found
     }
 
+    /**
+     * Findet den Index der vorherigen Karte mit einem Gewicht > 0,
+     * beginnend vom gegebenen Startindex
+     * @param startIndex Der Index, ab dem rückwärts gesucht werden soll
+     * @return Index der vorherigen gewichteten Karte oder letzter Index, falls keine gefunden
+     */
     private int findPreviousWeightedCard(int startIndex) {
         List<Card> cards = deck.getCards();
         for (int i = startIndex; i >= 0; i--) {
@@ -243,7 +274,11 @@ public class CardViewScreen extends BorderPane {
         return cards.size() - 1; // Fallback to last card if none found
     }
 
-
+    /**
+     * Aktualisiert die Anzeige der aktuellen Karte.
+     * Zeigt entweder nur das Vokabular oder auch die Übersetzung an,
+     * abhängig vom showTranslation-Status
+     */
     private void updateCardDisplay() {
         if (deck.getCards().isEmpty()) return;
 
@@ -255,6 +290,10 @@ public class CardViewScreen extends BorderPane {
         }
     }
 
+    /**
+     * Gibt Debug-Informationen über den aktuellen Zustand des Decks
+     * in der Konsole aus
+     */
     public void printDeckDebugInfo() {
         if (deck == null || deck.getCards().isEmpty()) {
             System.out.println("Deck is empty or not initialized");

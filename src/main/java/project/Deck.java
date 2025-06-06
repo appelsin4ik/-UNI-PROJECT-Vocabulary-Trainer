@@ -22,15 +22,25 @@ public class Deck {
 
     private transient String sourceFileName;
 
-    /** neues leeres Deck erstellen */
+    /**
+     * Neues leeres Deck erstellen
+     */
     public Deck() {
         this.cards = new ArrayList<>();
     }
+    /**
+     * Erstellt ein neues Deck mit dem angegebenen Namen
+     * @param name Name des neuen Decks
+     */
     public Deck(String name) {
         this.name = name;
         this.cards = new ArrayList<>();
     }
-
+    /**
+     * Erstellt ein neues Deck mit Name und vorhandenen Karten
+     * @param name Name des neuen Decks
+     * @param cards Liste der Karten für das Deck
+     */
     public Deck(String name,List<Card> cards) {
         this.name = name;
         this.cards = cards;
@@ -112,10 +122,18 @@ public class Deck {
         mapper.writeValue(file, this);
     }
 
+    /**
+     * Setzt den Dateinamen der Quelldatei
+     * @param sourceFileName Name der Quelldatei
+     */
     public void setSourceFileName(String sourceFileName) {
         this.sourceFileName = sourceFileName;
     }
 
+    /**
+     * Gibt den Dateinamen der Quelldatei zurück
+     * @return Name der Quelldatei
+     */
     public String getSourceFileName() {
         return sourceFileName;
     }

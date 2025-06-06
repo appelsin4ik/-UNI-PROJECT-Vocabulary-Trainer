@@ -14,13 +14,36 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeckCreationScreen extends BorderPane{
+/**
+ * Diese Klasse repräsentiert den Bildschirm zur Erstellung eines neuen Kartendecks.
+ *  * Sie bietet eine grafische Benutzeroberfläche zum Erstellen
+ *  * und Speichern von Karteikartendecks.
+ */
+public class DeckCreationScreen extends BorderPane {
+    /**
+     * Container für die Hauptelemente des Deck-Erstellungsformulars
+     */
     private VBox createCollection;
+    /**
+     * Die Hauptszene dieser Ansicht
+     */
     private Scene scene;
+    /**
+     * Textfeld für den Namen des zu erstellenden Decks
+     */
     private TextField deckNameField;
+    /**
+     * Container für die Liste der Karteneingabefelder
+     */
     private VBox cardListContainer;
+    /**
+     * Liste der Eingabefeld-Paare (Begriff und Übersetzung) für die Karteikarten
+     */
     private List<Pair<TextField, TextField>> cardFields;
 
+    /**
+     * Konstruktor, der die Benutzeroberfläche initialisiert und die Sidebar einrichtet
+     */
     public DeckCreationScreen() {
 
         var sidebarManager = SidebarManager.getInstance();
@@ -62,6 +85,10 @@ public class DeckCreationScreen extends BorderPane{
         scene = new Scene(this,1000,700);
     }
 
+    /**
+     * Erstellt die Hauptansicht des Deck-Erstellungsbildschirms
+     * @return VBox-Container mit allen UI-Elementen für die Deck-Erstellung
+     */
     public VBox createScene() {
         createCollection = new VBox(10);
         createCollection.setPadding(new Insets(20));
@@ -87,8 +114,14 @@ public class DeckCreationScreen extends BorderPane{
         return createCollection;
     }
 
+    /**
+     * Zeigt den Deck-Erstellungsbildschirm im Hauptfenster an
+     */
     public void show() {Main.getStage().setScene(scene);}
 
+    /**
+     * Fügt eine neue Zeile mit Eingabefeldern für Begriff und Übersetzung hinzu
+     */
     private void addCardInputRow() {
         HBox row = new HBox(5);
         TextField termField = new TextField();
@@ -104,6 +137,10 @@ public class DeckCreationScreen extends BorderPane{
         cardFields.add(new Pair<>(termField, translationField));
     }
 
+    /**
+     * Speichert das erstellte Deck als JSON-Datei
+     * @param stage Das Hauptfenster der Anwendung
+     */
     private void saveDeckToFile(Stage stage) {
 
         String deckName = deckNameField.getText().trim();
@@ -146,6 +183,11 @@ public class DeckCreationScreen extends BorderPane{
 
     }
 
+    /**
+     * Zeigt einen Informations-Dialog an
+     * @param title Der Titel des Dialog-Fensters
+     * @param message Die anzuzeigende Nachricht
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

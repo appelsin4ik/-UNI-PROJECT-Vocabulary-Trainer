@@ -268,6 +268,10 @@ public class DeckSidebar extends VBox {
         return buttons;
     }
 
+    /**
+     * Gibt den About-Button zurück.
+     * @return Button für den About-Dialog
+     */
     public Button getAboutButton() {return aboutButton;}
 
     /**

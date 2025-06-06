@@ -147,6 +147,7 @@ public class SettingsScreen extends BorderPane {
         toggleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         var aboutButton = new Button("About");
+        aboutButton.setStyle("-fx-padding: 10px; -fx-font-weight: bold; -fx-font-size: 14px;");
         aboutButton.setOnAction(e -> AboutDialog.show());
 
         // Alles zusammensetzen

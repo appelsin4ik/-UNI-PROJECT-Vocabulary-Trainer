@@ -93,11 +93,10 @@ public class DeckDisplayScreen extends BorderPane {
         Main.getStage().setScene(scene);
     }
 
-    private void showSettingsScreen() {
-        SettingsScreen settingView = new SettingsScreen(this.deckManager,this);
-        settingView.show();
-    }
-
+    /**
+     * Ein einzelnes Deck-Container zurückgeben
+     * @return FlowPane Container mit allen Deck-Boxen
+     */
     private VBox createMainContent() {
         VBox content = new VBox(10);
         content.setPadding(new Insets(20));
@@ -123,6 +122,7 @@ public class DeckDisplayScreen extends BorderPane {
         content.getChildren().addAll(title, deckContainer);
         return content;
     }
+
     /**
      * Erstellt eine einzelne Deckbox. Über die Decks wird dann iteriert und für jedes Deck diese Methode
      * aufgerufen, um ein neues UI dafür zu erstellen.
@@ -227,6 +227,11 @@ public class DeckDisplayScreen extends BorderPane {
         return addDeckBox;
     }
 
+    /**
+     * Fügt ein neues Deck durch Importieren einer JSON-Datei hinzu.
+     * Öffnet einen FileChooser-Dialog und lässt den Benutzer eine JSON-Datei auswählen.
+     * Das importierte Deck wird zum DeckManager hinzugefügt und gespeichert.
+     */
     private void addNewDeck() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import Deck from JSON");
@@ -271,10 +276,17 @@ public class DeckDisplayScreen extends BorderPane {
         }
     }
 
+    /**
+     * Aktualisiert den Hauptinhalt des Screens durch Neuerstellen und Setzen des Contents
+     */
     private void refreshContent() {
         this.setCenter(createMainContent()); // Recreate and set the content
     }
 
+    /**
+     * Gibt die einzige Instanz dieser Klasse zurück (Singleton-Pattern)
+     * @return Die Instanz von DeckDisplayScreen
+     */
     public static DeckDisplayScreen getInstance() {
         if(instance == null) {
             instance = new DeckDisplayScreen(DeckManager.getInstance());
@@ -283,6 +295,11 @@ public class DeckDisplayScreen extends BorderPane {
         return instance;
     }
 
+    /**
+     * Aktualisiert die Anzeige aller Decks.
+     * Löscht alle bestehenden Deck-Anzeigen und erstellt sie neu
+     * basierend auf den aktuellen Daten aus dem DeckManager.
+     */
     public void updateDecks() {
         deckContainer.getChildren().clear();
         for (Deck deck : DeckManager.getInstance().getDecks()) {
@@ -291,6 +308,10 @@ public class DeckDisplayScreen extends BorderPane {
         }
     }
 
+    /**
+     * Speichert ein Deck in eine JSON-Datei
+     * @param deck Das zu speichernde Deck
+     */
     public static void saveDeckToFile(Deck deck) {
         if (deck.getSourceFileName() == null) {
             System.err.println("❌ Fehler: Kein Dateiname im Deck gesetzt.");

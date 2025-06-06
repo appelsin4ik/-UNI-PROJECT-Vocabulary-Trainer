@@ -39,12 +39,21 @@ public class Card implements Comparable<Card>{
         this.weight = weight;
     }
 
+    /**
+     * Karte constructor mit Standardgewichtung
+     * @param vocabulary angezeigter Text
+     * @param translation zu erlernendes Ergebnis
+     */
     public Card(String vocabulary, String translation) {
         this.vocabulary = vocabulary;
         this.translation = translation;
         this.weight = 0;
     }
 
+    /**
+     * Getter für den Vokabeltext der Karte
+     * @return Der angezeigte Text (vocabulary) der Karte
+     */
     public String getTerm() {
         return vocabulary;
     }
