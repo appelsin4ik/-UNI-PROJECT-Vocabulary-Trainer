@@ -1,15 +1,12 @@
 package project;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 /**
@@ -31,7 +28,7 @@ public class Deck {
     }
     public Deck(String name) {
         this.name = name;
-        this.cards = new ArrayList<Card>();
+        this.cards = new ArrayList<>();
     }
 
     public Deck(String name,List<Card> cards) {
@@ -70,39 +67,6 @@ public class Deck {
     public void addCard(String vocabulary, String translation) {
         Card newCard = new Card(vocabulary, translation, 1);
         cards.add(newCard);
-    }
-
-    /**
-     * Umbenennung eines Decks
-     * @param newName neuer Name
-     * @return true wenn Erfolgreich, false wenn Umbenennen schiefgelaufen ist
-     */
-    public boolean setName(String newName) throws IOException {
-        var userdataPath = Main.getUserdataPath();
-        var oldFile = userdataPath.resolve(name + ".json").toFile();
-        if (oldFile.exists()) {
-            // alte Datei umbenennen
-            var newFile = userdataPath.resolve(newName + ".json").toFile();
-            // false zurückgeben wenn fehler
-            if (!oldFile.renameTo(newFile)) return false;
-        } else {
-            // neue Datei erstellen, wenn alte nicht existiert
-            var newFile = userdataPath.resolve(newName + ".json").toFile();
-            this.writeFile(newFile);
-        }
-        this.name = newName;
-        return true;
-    }
-
-    /**
-     * lädt ein Deck als Json aus einer Datei
-     * @param name name des Decks
-     * @return das geladene Deck
-     */
-    public static Deck load(String name) throws IOException {
-        var userdataPath = Main.getUserdataPath();
-        var file = userdataPath.resolve(name + ".json").toFile();
-        return Deck.readFile(file);
     }
 
     /**

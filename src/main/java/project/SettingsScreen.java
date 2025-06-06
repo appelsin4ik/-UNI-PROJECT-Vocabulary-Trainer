@@ -1,7 +1,6 @@
 package project;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -15,8 +14,6 @@ import java.io.File;
  * Einstellungsbildschirm der Anwendung
  */
 public class SettingsScreen extends BorderPane {
-    /** Callback-Funktion für die Zurück-Navigation */
-    private Runnable onBack;
     /** Manager für die Verwaltung von Kartendecks */
     private DeckManager deckManager;
     /** Bildschirm zur Anzeige von Decks */

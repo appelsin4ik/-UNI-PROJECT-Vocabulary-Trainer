@@ -1,7 +1,5 @@
 package project;
 
-import javafx.scene.control.TextField;
-import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,8 +17,8 @@ public class DeckTest {
 
         deck.addCard("Hund", "Dog");
         assertEquals(1, deck.getCards().size());
-        assertEquals("Hund", deck.getCards().get(0).vocabulary);
-        assertEquals("Dog", deck.getCards().get(0).translation);
+        assertEquals("Hund", deck.getCards().getFirst().vocabulary);
+        assertEquals("Dog", deck.getCards().getFirst().translation);
     }
 
     @Test
