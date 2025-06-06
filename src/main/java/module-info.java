@@ -12,6 +12,7 @@ module project.main {
     requires net.harawata.appdirs;
     requires com.google.gson;
     requires com.sun.jna.platform;
+    requires java.desktop;
 
     opens project to javafx.graphics;
     exports project;

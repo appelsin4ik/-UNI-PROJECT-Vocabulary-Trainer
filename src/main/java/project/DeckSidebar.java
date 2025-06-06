@@ -103,7 +103,8 @@ public class DeckSidebar extends VBox {
         // Sidebar title
         Label sidebarTitle = new Label("P e n t a l i n g o");
         sidebarTitle.setFont(Font.font("K2D"));
-        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 25px; -fx-font-weight: bold;");
+        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;");
+        sidebarTitle.setAlignment(Pos.CENTER);
         sidebarTitle.setPadding(new Insets(0, 0, 20, 20));
 
 
