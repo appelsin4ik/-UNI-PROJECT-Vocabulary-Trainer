@@ -46,6 +46,10 @@ public class DeckCreationScreen extends BorderPane{
                         SidebarManager.showDeckScreen();
                         break;
 
+                    case "About":
+                        AboutDialog.show();
+                        break;
+
                     default:
                         break;
                 }

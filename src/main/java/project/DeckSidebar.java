@@ -268,6 +268,8 @@ public class DeckSidebar extends VBox {
         return buttons;
     }
 
+    public Button getAboutButton() {return aboutButton;}
+
     /**
      * Gibt den zuletzt gedrückten Button zurück.
      * @return Der aktuell ausgewählte Button

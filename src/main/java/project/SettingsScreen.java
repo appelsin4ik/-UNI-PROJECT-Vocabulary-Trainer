@@ -63,6 +63,10 @@ public class SettingsScreen extends BorderPane {
                         SidebarManager.showDeckScreen();
                         break;
 
+                    case "About":
+                        AboutDialog.show();
+                        break;
+
                     default:
                         break;
                 }

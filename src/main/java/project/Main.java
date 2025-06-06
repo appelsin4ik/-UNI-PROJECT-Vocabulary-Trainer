@@ -73,6 +73,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         Main.stage = stage;
         stage.setTitle("Pentalingo");
+        stage.setResizable(false);
 
         AppSettings settings = SettingsIO.loadSettings();
         DeckManager deckManager = new DeckManager(settings);
