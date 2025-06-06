@@ -27,7 +27,8 @@ public class DeckSidebar extends VBox {
         TABLE_ICON(FontAwesomeIcon.TABLE),
         BARS_ICON(FontAwesomeIcon.BARS),
         SLIDERS_ICON(FontAwesomeIcon.SLIDERS),
-        CARDS_ICON(FontAwesomeIcon.STICKY_NOTE);
+        CARDS_ICON(FontAwesomeIcon.STICKY_NOTE),
+        INFO_CIRCLE(FontAwesomeIcon.INFO_CIRCLE);
 
         private final FontAwesomeIcon icon;
 
@@ -80,6 +81,11 @@ public class DeckSidebar extends VBox {
      * Ermöglicht die Navigation zu den Anwendungseinstellungen.
      */
     private Button settingsButton;
+    /**
+     * Button für das Öffnen des About Dialogs.
+     * Ermöglicht die Navigation zu den Anwendungseinstellungen.
+     */
+    private Button aboutButton;
 
     /**
      * Speichert den aktuell ausgewählten/gedrückten Button.
@@ -112,7 +118,8 @@ public class DeckSidebar extends VBox {
         decksButton = createNavButton("Decks", Icons.BARS_ICON.getIconView());
         managementButton = createNavButton("Karten-Verwaltung", Icons.TABLE_ICON.getIconView());
         settingsButton = createNavButton("Einstellungen", Icons.SLIDERS_ICON.getIconView());
-
+        aboutButton = createNavButton("About", Icons.INFO_CIRCLE.getIconView());
+        aboutButton.setOnAction(e -> AboutDialog.show());
 
         // Add all elements to sidebar
         sidebar.getChildren().addAll(
@@ -120,11 +127,11 @@ public class DeckSidebar extends VBox {
                 cardsButton,
                 decksButton,
                 managementButton,
-                settingsButton
+                settingsButton,
+                aboutButton
         );
 
         buttons.addAll(childrenToButtons(sidebar.getChildren()));
-
 
         this.sidebar = sidebar;
     }
