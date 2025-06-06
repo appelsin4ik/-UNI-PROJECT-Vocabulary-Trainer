@@ -106,7 +106,7 @@ public class DeckCreationScreen extends BorderPane {
         Button addCardButton = new Button("+ Weitere Karte hinzufügen");
         addCardButton.setOnAction(e -> addCardInputRow());
 
-        Button saveDeckButton = new Button("Deck speichern und exportieren");
+        Button saveDeckButton = new Button("Deck speichern und fortführen");
         saveDeckButton.setOnAction(e -> saveDeckToFile(Main.getStage()));
 
         createCollection.getChildren().addAll(title, deckNameField, cardListContainer, addCardButton, saveDeckButton);
