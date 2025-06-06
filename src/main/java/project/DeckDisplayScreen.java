@@ -1,19 +1,18 @@
 package project;
 
+import com.google.gson.Gson;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.stage.FileChooser;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -26,6 +25,10 @@ public class DeckDisplayScreen extends BorderPane {
 
     /** Scene in der dieser Screen angezeigt wird */
     private Scene scene;
+
+    private static DeckDisplayScreen instance;
+
+    private static FlowPane deckContainer;
 
     /**
      * Constructor dieses Screens
@@ -49,17 +52,18 @@ public class DeckDisplayScreen extends BorderPane {
             b.setOnAction(e -> {
                 switch (b.getText().trim()){
                     case "Karten":
-                        SettingsScreen.showWarning();
+                        sidebarManager.updateButton(sidebarManager.getCardsButton());
+                        SidebarManager.showCreationScreen();
                         break;
                     // NEED to be DONE
 
                     case "Karten-Verwaltung":
-                        SettingsScreen.showWarning();
+                        SidebarManager.showWarning();
                         break;
                     // NEED to be DONE
                     case "Einstellungen":
                         sidebarManager.updateButton(sidebarManager.getSettingsButton());
-                        showSettingsScreen();
+                        SidebarManager.showSettingsScreen();
                         break;
 
                     default:
@@ -74,6 +78,7 @@ public class DeckDisplayScreen extends BorderPane {
         this.setCenter(content);
 
         // Set up the scene
+        instance = this;
         scene = new Scene(this, 1000, 700);
     }
 
@@ -85,7 +90,7 @@ public class DeckDisplayScreen extends BorderPane {
     }
 
     private void showSettingsScreen() {
-        SettingsScreen settingView = new SettingsScreen(this::show, this.deckManager,this);
+        SettingsScreen settingView = new SettingsScreen(this.deckManager,this);
         settingView.show();
     }
 
@@ -98,12 +103,12 @@ public class DeckDisplayScreen extends BorderPane {
         title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
 
         // Deck container
-        FlowPane deckContainer = new FlowPane();
+        deckContainer = new FlowPane();
         deckContainer.setHgap(15);
         deckContainer.setVgap(15);
         deckContainer.setPadding(new Insets(10));
 
-        for (Deck deck : deckManager.getDecks()) {
+        for (Deck deck : this.deckManager.getDecks()) {
             VBox deckBox = createDeckBox(deck);
             deckContainer.getChildren().add(deckBox);
         }
@@ -116,7 +121,7 @@ public class DeckDisplayScreen extends BorderPane {
     }
     /**
      * Erstellt eine einzelne Deckbox. Über die Decks wird dann iteriert und für jedes Deck diese Methode
-     * aufgerufen um ein neues UI dafür zu erstellen.
+     * aufgerufen, um ein neues UI dafür zu erstellen.
      * @param deck das Deck, zu dem die UI erstellt werden soll
      */
     private VBox createDeckBox(Deck deck) {
@@ -134,14 +139,45 @@ public class DeckDisplayScreen extends BorderPane {
         cardCount.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
 
         Button startButton = new Button("Start");
-        startButton.setStyle("-fx-font-size: 14px; -fx-background-color: #4CAF50; " +
-                "-fx-text-fill: white; -fx-padding: 8px 16px;");
+        startButton.setStyle(defaultStyle());
+
+        startButton.setOnMouseEntered(e -> {
+            if (startButton.getStyle().equals(defaultStyle())) {
+                startButton.setStyle(hoveredStyle());
+            }
+        });
+
+        startButton.setOnMouseExited(e -> {
+            if (startButton.getStyle().equals(hoveredStyle())) {
+                startButton.setStyle(defaultStyle());
+            }
+        });
+
+
         startButton.setOnAction(e -> {
             showCardScreen(deck);
         });
 
         deckBox.getChildren().addAll(deckName, cardCount, startButton);
         return deckBox;
+    }
+
+    /**
+     * Gibt den Standard-Stil für einen Button über dem die Maus hovert zurück.
+     * @return CSS-Stil als String
+     */
+    private String hoveredStyle() {
+        return "-fx-text-fill: white; -fx-font-size: 14px; " +
+                "-fx-background-color: #377a3a; -fx-padding: 8px 16px;";
+    }
+
+    /**
+     * Gibt den Standard-Stil für einen nicht ausgewählten Button zurück.
+     * @return CSS-Stil als String
+     */
+    private String defaultStyle() {
+        return "-fx-font-size: 14px; -fx-background-color: #4CAF50; " +
+                "-fx-text-fill: white; -fx-padding: 8px 16px;";
     }
 
     /**
@@ -212,13 +248,13 @@ public class DeckDisplayScreen extends BorderPane {
             try {
                 Deck importedDeck = Deck.readFile(selectedFile);
 
-                boolean deckExists = deckManager.getDecks().stream()
+                boolean deckExists = this.deckManager.getDecks().stream()
                         .anyMatch(d -> d.getName().equals(importedDeck.getName()));
 
                 if (deckExists) {
                     System.out.println("Deck with this name already exists!");
                 } else {
-                    deckManager.addDeck(importedDeck);
+                    this.deckManager.addDeck(importedDeck);
                     importedDeck.save();
                     refreshContent();
                     show();
@@ -233,5 +269,37 @@ public class DeckDisplayScreen extends BorderPane {
 
     private void refreshContent() {
         this.setCenter(createMainContent()); // Recreate and set the content
+    }
+
+    public static DeckDisplayScreen getInstance() {
+        if(instance == null) {
+            instance = new DeckDisplayScreen(DeckManager.getInstance());
+        }
+
+        return instance;
+    }
+
+    public void updateDecks() {
+        deckContainer.getChildren().clear();
+        for (Deck deck : DeckManager.getInstance().getDecks()) {
+            Label deckLabel = new Label(deck.getName());
+            deckContainer.getChildren().add(deckLabel);
+        }
+    }
+
+    public static void saveDeckToFile(Deck deck) {
+        if (deck.getSourceFileName() == null) {
+            System.err.println("❌ Fehler: Kein Dateiname im Deck gesetzt.");
+            return;
+        }
+
+        File file = new File("saves", deck.getSourceFileName());
+        try (FileWriter writer = new FileWriter(file)) {
+            Gson gson = new Gson();
+            gson.toJson(deck, writer);
+            System.out.println("✅ Änderungen gespeichert in: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("❌ Fehler beim Speichern des Decks: " + e.getMessage());
+        }
     }
 }

@@ -2,46 +2,37 @@ package project;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DeckManagerTest {
-
     @Test
-    public void testDeckInitialization() {
-        DeckManager deckManager = new DeckManager();
-        List<Deck> decks = deckManager.getDecks();
+    public void testDeckExportSkippedIfFileExists() throws IOException {
+        Deck deck = new Deck("UniqueDeck", List.of(new Card("Baum", "tree")));
+        File file = new File("saves", "uniquedeck.json");
 
-        assertNotNull(decks);
-        assertFalse(decks.isEmpty(), "Deck list should not be empty");
-        assertEquals(4, decks.size(), "Expected 4 default decks");
+        // Vorbereiten: Datei anlegen
+        if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write("placeholder");
+        }
 
-        boolean containsBasic = decks.stream().anyMatch(d -> d.getName().equals("Basic Vocabulary"));
-        boolean containsAdvanced = decks.stream().anyMatch(d -> d.getName().equals("Advanced Vocabulary"));
+        long originalLength = file.length();
 
-        assertTrue(containsBasic, "Should contain 'Basic Vocabulary' deck");
-        assertTrue(containsAdvanced, "Should contain 'Advanced Vocabulary' deck");
-    }
+        // Export sollte nicht überschreiben
+        DeckManager.exportDeckToFile(deck);
 
-    @Test
-    public void testBasicVocabularyDeckContents() {
-        DeckManager manager = new DeckManager();
-        Deck basicDeck = manager.getDecks().stream()
-                .filter(d -> d.getName().equals("Basic Vocabulary"))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Basic Vocabulary deck not found"));
-
-        assertEquals(6, basicDeck.getCards().size(), "Expected 6 cards in Basic Vocabulary deck");
-
-        Card firstCard = basicDeck.getCards().get(0);
-        assertEquals("Hello", firstCard.vocabulary);
-        assertEquals("Bonjour", firstCard.translation);
+        assertEquals(originalLength, file.length()); // Dateiinhalt unverändert
+        file.delete();
     }
 
     @Test
     public void testWeightDistributionInAdvancedDeck() {
-        DeckManager manager = new DeckManager();
+        DeckManager manager = new DeckManager(SettingsIO.loadSettings());
         Deck advancedDeck = manager.getDecks().stream()
                 .filter(d -> d.getName().equals("Advanced Vocabulary"))
                 .findFirst()

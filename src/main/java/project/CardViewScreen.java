@@ -53,7 +53,7 @@ public class CardViewScreen extends BorderPane {
 
         // Back button (top left)
         Button backButton = new Button("Back to Decks", backIcon);
-        backButton.setStyle("-fx-font-size: 14px;");
+        backButton.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent; -fx-font-size: 14px;");
         backButton.setOnAction(e -> onBack.run());
         this.setTop(backButton);
 
@@ -197,6 +197,7 @@ public class CardViewScreen extends BorderPane {
         updateDifficultyButtons();
         updateCardDisplay();
         printDeckDebugInfo();
+        DeckDisplayScreen.saveDeckToFile(this.deck);
     }
 
     private void navigateCard(int direction) {

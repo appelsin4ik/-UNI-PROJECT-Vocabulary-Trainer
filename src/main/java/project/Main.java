@@ -74,7 +74,8 @@ public class Main extends Application {
         Main.stage = stage;
         stage.setTitle("Pentalingo");
 
-        DeckManager deckManager = new DeckManager();
+        AppSettings settings = SettingsIO.loadSettings();
+        DeckManager deckManager = new DeckManager(settings);
         DeckDisplayScreen deckDisplay = new DeckDisplayScreen(deckManager);
         deckDisplay.show();
         stage.show();

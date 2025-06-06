@@ -10,6 +10,8 @@ module project.main {
     requires com.fasterxml.jackson.annotation;
     requires java.prefs;
     requires net.harawata.appdirs;
+    requires com.google.gson;
+    requires com.sun.jna.platform;
 
     opens project to javafx.graphics;
     exports project;

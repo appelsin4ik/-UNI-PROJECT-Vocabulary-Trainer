@@ -3,10 +3,7 @@ package project;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -27,6 +24,8 @@ public class SettingsScreen extends BorderPane {
     /** Hauptszene des Einstellungsbildschirms */
     private Scene scene;
 
+    private AppSettings appSettings;
+
     /** ComboBox für die Auswahl des Themes (Light/Dark Mode) */
     private static ComboBox<String> themeSelector;
     /** Button zur Dateiauswahl für den Import */
@@ -37,13 +36,10 @@ public class SettingsScreen extends BorderPane {
     /**
      * Konstruktor für den Einstellungsbildschirm.
      *
-     * @param onBack Callback-Funktion für die Zurück-Navigation
      * @param deckManager Manager für die Deck-Verwaltung
      * @param deckDisplayScreen Bildschirm zur Anzeige von Decks
      */
-    public SettingsScreen(Runnable onBack, DeckManager deckManager, DeckDisplayScreen deckDisplayScreen) {
-        //this.deckManager = deckManager;
-        this.onBack = onBack;
+    public SettingsScreen( DeckManager deckManager, DeckDisplayScreen deckDisplayScreen) {
         this.deckManager = deckManager;
         this.deckDisplayScreen = deckDisplayScreen;
 
@@ -57,17 +53,17 @@ public class SettingsScreen extends BorderPane {
             b.setOnAction(e -> {
                 switch (b.getText().trim()){
                     case "Karten":
-                        showWarning();
+                        sidebarManager.updateButton(sidebarManager.getCardsButton());
+                        SidebarManager.showCreationScreen();
                         break;
-                    // NEED to be DONE
 
                     case "Karten-Verwaltung":
-                        showWarning();
+                        SidebarManager.showWarning();
                         break;
                     // NEED to be DONE
                     case "Decks":
                         sidebarManager.updateButton(sidebarManager.getDecksButton());
-                        showDeckScreen();
+                        SidebarManager.showDeckScreen();
                         break;
 
                     default:
@@ -95,6 +91,8 @@ public class SettingsScreen extends BorderPane {
      * @return VBox Container mit allen UI-Elementen der Einstellungen
      */
     public VBox createSettingsScene() {
+        appSettings = SettingsIO.loadSettings();
+
         // Root-Layout
         VBox root = new VBox(20);
         root.setPadding(new Insets(30));
@@ -131,9 +129,25 @@ public class SettingsScreen extends BorderPane {
         importBox.setPrefHeight(50);
         importBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
+        Label toggleLabel = new Label("Beispiel-Decks beim Start automatisch laden:");
+
+        CheckBox toggle = new CheckBox();
+        toggle.setSelected(appSettings.isGenerateDefaultDecks());
+
+        toggle.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+            appSettings.setGenerateDefaultDecks(isSelected);
+            SettingsIO.saveSettings(appSettings);
+        });
+
+        HBox toggleBox = new HBox(450, toggleLabel, toggle);
+        toggleBox.setPadding(new Insets(10));
+        toggleBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5;");
+        toggleBox.setPrefHeight(50);
+        toggleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
 
         // Alles zusammensetzen
-        root.getChildren().addAll(title,themeBox, importBox);
+        root.getChildren().addAll(title,themeBox,importBox,toggleBox);
 
         return root;
     }
@@ -149,26 +163,6 @@ public class SettingsScreen extends BorderPane {
         File selectedFile = fileChooser.showOpenDialog(Main.getStage());
         if (selectedFile != null) {
             System.out.println("Ausgewählte Datei: " + selectedFile.getAbsolutePath());
-            // Hier import Logik
         }
-    }
-
-    /**
-     * Wechselt zur Deck-Anzeige.
-     */
-    private void showDeckScreen() {
-        DeckDisplayScreen deckView = new DeckDisplayScreen(deckManager);
-        deckView.show();
-    }
-
-    /**
-     * Zeigt eine Warnung für nicht implementierte Funktionen an.
-     */
-    public static void showWarning() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText("Das Menu ist noch in Arbeit");
-        alert.setContentText("Wartet auf updates :=)");
-        alert.showAndWait();
     }
 }

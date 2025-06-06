@@ -23,6 +23,8 @@ public class Deck {
     @JsonProperty("cards")
     private List<Card> cards;
 
+    private transient String sourceFileName;
+
     /** neues leeres Deck erstellen */
     public Deck() {
         this.cards = new ArrayList<>();
@@ -30,6 +32,11 @@ public class Deck {
     public Deck(String name) {
         this.name = name;
         this.cards = new ArrayList<Card>();
+    }
+
+    public Deck(String name,List<Card> cards) {
+        this.name = name;
+        this.cards = cards;
     }
 
     /**
@@ -139,5 +146,13 @@ public class Deck {
 
         // Deck json in Datei schreiben
         mapper.writeValue(file, this);
+    }
+
+    public void setSourceFileName(String sourceFileName) {
+        this.sourceFileName = sourceFileName;
+    }
+
+    public String getSourceFileName() {
+        return sourceFileName;
     }
 }

@@ -1,5 +1,11 @@
 package project;
 
+import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,17 +16,76 @@ import java.util.List;
 public class DeckManager {
     /** liste aller geladenen Karten Decks */
     private List<Deck> decks;
+    //private static  AppSettings mainSettings;
+    private static DeckManager instance;
 
     /**
      * DeckManager Constructor
      */
-    public DeckManager() {
-        this.decks = new ArrayList<>(Arrays.asList(
-                createBasicVocabularyDeck(),
-                createAdvancedVocabularyDeck(),
-                createFoodVocabularyDeck(),
-                createDummyVocabularyDeck()
-        ));
+    public DeckManager(AppSettings settings) {
+        this.decks = new ArrayList<>();
+        if (settings.isGenerateDefaultDecks() && decks.isEmpty()) {
+            exportDeckToFile(createAdvancedVocabularyDeck());
+            exportDeckToFile(createDummyVocabularyDeck());
+            exportDeckToFile(createBasicVocabularyDeck());
+            exportDeckToFile(createFoodVocabularyDeck());
+        }
+        loadDecks();
+    }
+
+    public static DeckManager getInstance() {
+        if (instance == null) {
+            instance = new DeckManager(SettingsIO.loadSettings());
+        }
+
+        return instance;
+    }
+
+    private void loadDecks() {
+        File saveFolder = new File("saves");
+        if (!saveFolder.exists()) {
+            saveFolder.mkdirs();
+        }
+
+        File[] jsonFiles = saveFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".json"));
+        if (jsonFiles == null) return;
+
+        Gson gson = new Gson();
+
+        for (File file : jsonFiles) {
+            try (FileReader reader = new FileReader(file)) {
+                Deck deck = gson.fromJson(reader, Deck.class);
+                if (deck != null && deck.getName() != null) {
+                    deck.setSourceFileName(file.getName());
+                    decks.add(deck);
+                }
+            } catch (Exception e) {
+                System.err.println("Fehler beim Laden von Deck aus Datei: " + file.getName());
+            }
+        }
+    }
+
+
+    public static void exportDeckToFile(Deck deck) {
+        File saveFolder = new File("saves");
+        if (!saveFolder.exists()) {
+            saveFolder.mkdirs();
+        }
+
+        String safeName = deck.getName().replaceAll("[^a-zA-Z0-9_\\-]", "_").toLowerCase();
+        File file = new File(saveFolder, safeName + ".json");
+
+        if (file.exists()) {
+            return;
+        }
+
+        try (FileWriter writer = new FileWriter(file)) {
+            Gson gson = new Gson();
+            gson.toJson(deck, writer);
+            System.out.println("✅ Deck exportiert: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("❌ Fehler beim Exportieren des Decks \"" + deck.getName() + "\": " + e.getMessage());
+        }
     }
 
     /**

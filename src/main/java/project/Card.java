@@ -38,9 +38,14 @@ public class Card implements Comparable<Card>{
         this.translation = translation;
         this.weight = weight;
     }
-//    public Card(String vocabulary, String translation, String[] phrases, int weight) {
-//        this.vocabulary = vocabulary;
-//        this.translation = translation;
-//        this.weight = weight;
-//    }
+
+    public Card(String vocabulary, String translation) {
+        this.vocabulary = vocabulary;
+        this.translation = translation;
+        this.weight = 0;
+    }
+
+    public String getTerm() {
+        return vocabulary;
+    }
 }

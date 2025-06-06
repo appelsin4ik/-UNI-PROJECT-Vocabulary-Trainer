@@ -1,6 +1,11 @@
 package project;
 
+import javafx.scene.control.TextField;
+import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +29,18 @@ public class DeckTest {
         Card c2 = new Card("Baum", "Tree", 3);
         assertTrue(c1.compareTo(c2) < 0);
         assertTrue(c2.compareTo(c1) > 0);
+    }
+
+    @Test
+    public void testDeckCreation() {
+        List<Card> cards = new ArrayList<>();
+        cards.add(new Card("Hund", "dog"));
+        cards.add(new Card("Katze", "cat"));
+
+        Deck deck = new Deck("TestDeck", cards);
+
+        assertEquals("TestDeck", deck.getName());
+        assertEquals(2, deck.getCards().size());
     }
 }
 
