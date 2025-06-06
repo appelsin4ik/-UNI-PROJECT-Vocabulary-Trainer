@@ -7,6 +7,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -44,7 +45,7 @@ public class AboutDialog {
         // Firmen Website Links
         Hyperlink websiteLink = new Hyperlink("www.pentalingo.com");
         Hyperlink deWebsiteLink = new Hyperlink("www.pentalingo.de");
-        VBox linkBox = new VBox(5);
+        var linkBox = new HBox(5);
         linkBox.setAlignment(Pos.CENTER);
         linkBox.getChildren().addAll(websiteLink, deWebsiteLink);
 
@@ -56,7 +57,9 @@ public class AboutDialog {
         description.setWrapText(true);
         description.setAlignment(Pos.CENTER);
 
-        VBox content = new VBox(15, logo, nameLabel, linkBox, description);
+        Label version = new Label("Version: 1.1");
+
+        VBox content = new VBox(15, logo, nameLabel, linkBox, description, version);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(20));
 

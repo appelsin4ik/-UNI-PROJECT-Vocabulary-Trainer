@@ -41,7 +41,7 @@ application {
 }
 
 group = "project"
-version = "1.0-SNAPSHOT"
+version = "1.1"
 
 java {
     toolchain {
@@ -61,13 +61,12 @@ tasks.test {
 tasks.javadoc {
     source = sourceSets["main"].allJava.srcDirs()
     options {
-        title = "Our Java Project"
-        version = "1.0"
+        title = "Pentalingo"
     }
 }
 
 jlink {
-    imageName = "Projekt"
+    imageName = "Pentalingo"
 
     addExtraDependencies("javafx")
 
@@ -82,7 +81,7 @@ jlink {
 
     addOptions("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages")
     launcher {
-        name = "projekt"
+        name = "Pentalingo"
         noConsole = true
     }
 
