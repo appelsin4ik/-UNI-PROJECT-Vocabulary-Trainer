@@ -51,7 +51,7 @@ public class Deck {
      * @return Name des Decks
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -92,7 +92,7 @@ public class Deck {
      * ObjectMapper instance erstellen
      * @return jackson ObjectMapper
      */
-    public static ObjectMapper getObjectMapper() {
+    private static ObjectMapper getObjectMapper() {
         return JsonMapper.builder()
             // ObjectMapper für pretty print convertieren
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true).build();
@@ -103,11 +103,34 @@ public class Deck {
      * @param file lesbare Datei
      * @return das geladene Deck
      */
-    public static Deck readFile(File file) throws IOException {
+    public static Deck readFile(File file) {
         // ObjectMapper instance erstellen
-        var mapper = Deck.getObjectMapper();
+        // var mapper = Deck.getObjectMapper();
         // json string mit ObjectMapper zu object convertieren
-        return mapper.readValue(file, Deck.class);
+        // return mapper.readValue(file, Deck.class);
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Deck loadedDeck = mapper.readValue(file, Deck.class);
+            loadedDeck.setSourceFileName(file.getName());
+
+            // Manuelle Validierung
+            if (loadedDeck.getCards() == null || loadedDeck.getCards().isEmpty()) {
+                throw new IllegalArgumentException("Deck enthält keine Karten.");
+            }
+
+            for (Card c : loadedDeck.getCards()) {
+                if (c.getTerm() == null || c.getTranslation() == null) {
+                    throw new IllegalArgumentException("Ungültige Karte gefunden.");
+                }
+            }
+
+            return loadedDeck;
+        } catch (Exception e) {
+            // System.err.println("Fehler beim Laden des Decks: " + e.getMessage());
+            return null;
+        }
+
     }
 
     /**
@@ -136,5 +159,14 @@ public class Deck {
      */
     public String getSourceFileName() {
         return sourceFileName;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return this.name; // oder getName() – je nachdem, wie dein Feld heißt
     }
 }

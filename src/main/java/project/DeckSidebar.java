@@ -40,7 +40,7 @@ public class DeckSidebar extends VBox {
          * Erstellt eine neue FontAwesomeIconView mit standardisierten Eigenschaften.
          * @return Eine konfigurierte FontAwesomeIconView-Instanz
          */
-        public FontAwesomeIconView getIconView() {
+        private FontAwesomeIconView getIconView() {
             FontAwesomeIconView view = new FontAwesomeIconView(icon);
             view.setSize("25px");
             view.setFill(Color.WHITE);

@@ -14,10 +14,6 @@ import java.io.File;
  * Einstellungsbildschirm der Anwendung
  */
 public class SettingsScreen extends BorderPane {
-    /** Manager für die Verwaltung von Kartendecks */
-    private DeckManager deckManager;
-    /** Bildschirm zur Anzeige von Decks */
-    private DeckDisplayScreen deckDisplayScreen;
     /** Hauptszene des Einstellungsbildschirms */
     private Scene scene;
 
@@ -37,8 +33,6 @@ public class SettingsScreen extends BorderPane {
      * @param deckDisplayScreen Bildschirm zur Anzeige von Decks
      */
     public SettingsScreen( DeckManager deckManager, DeckDisplayScreen deckDisplayScreen) {
-        this.deckManager = deckManager;
-        this.deckDisplayScreen = deckDisplayScreen;
 
         var sidebarManager = SidebarManager.getInstance();
         //Add Sidebar
@@ -55,9 +49,10 @@ public class SettingsScreen extends BorderPane {
                         break;
 
                     case "Karten-Verwaltung":
-                        SidebarManager.showWarning();
+                        sidebarManager.updateButton(sidebarManager.getManagementButton());
+                        SidebarManager.showManagementScreen();
                         break;
-                    // NEED to be DONE
+
                     case "Decks":
                         sidebarManager.updateButton(sidebarManager.getDecksButton());
                         SidebarManager.showDeckScreen();
@@ -91,7 +86,7 @@ public class SettingsScreen extends BorderPane {
      *
      * @return VBox Container mit allen UI-Elementen der Einstellungen
      */
-    public VBox createSettingsScene() {
+    private  VBox createSettingsScene() {
         appSettings = SettingsIO.loadSettings();
 
         // Root-Layout
@@ -146,12 +141,8 @@ public class SettingsScreen extends BorderPane {
         toggleBox.setPrefHeight(50);
         toggleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        var aboutButton = new Button("About");
-        aboutButton.setStyle("-fx-padding: 10px; -fx-font-weight: bold; -fx-font-size: 14px;");
-        aboutButton.setOnAction(e -> AboutDialog.show());
-
         // Alles zusammensetzen
-        root.getChildren().addAll(title, themeBox, importBox, toggleBox, aboutButton);
+        root.getChildren().addAll(title, themeBox, importBox, toggleBox);
 
         return root;
     }

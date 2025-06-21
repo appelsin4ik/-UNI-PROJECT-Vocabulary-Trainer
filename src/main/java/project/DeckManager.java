@@ -1,6 +1,7 @@
 package project;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.File;
 import java.io.FileReader;
@@ -97,7 +98,7 @@ public class DeckManager {
         }
 
         try (FileWriter writer = new FileWriter(file)) {
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(deck, writer);
             System.out.println("✅ Deck exportiert: " + file.getAbsolutePath());
         } catch (IOException e) {
@@ -179,4 +180,46 @@ public class DeckManager {
     public void addDeck(Deck deck) {
         decks.add(deck);
     }
+
+    public static void saveDeck(Deck deck) {
+
+        if (deck == null) {
+            NotificationIO.showWarning("Fehler", "Deck ist beschädigt");
+            System.err.println("Fehler: Deck ist null.");
+            return;
+        }
+
+        String name = deck.getName();
+        if (name == null || name.trim().isEmpty()) {
+            NotificationIO.showWarning("Fehler", "Deck hat keinen gültigen Namen");
+            System.err.println("Fehler: Deck hat keinen gültigen Namen.");
+            return;
+        }
+
+        if (deck.getCards() == null || deck.getCards().isEmpty()) {
+            NotificationIO.showWarning("Fehler", "Deck enthält keine Karten");
+            System.err.println("Fehler: Deck enthält keine Karten.");
+            return;
+        }
+
+        File directory = new File("saves");
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                NotificationIO.showWarning("Fehler", "Fehler beim Erstellen des Deck-Ordners");
+                System.err.println("Fehler beim Erstellen des Deck-Ordners.");
+                return;
+            }
+        }
+
+        File file = new File(directory, name.replaceAll("\\s+", "_") + ".json");
+        try (FileWriter writer = new FileWriter(file)) {
+            Gson gson = new Gson();
+            gson.toJson(deck, writer);
+            System.out.println("Deck erfolgreich gespeichert: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Fehler beim Speichern des Decks: " + e.getMessage());
+            return;
+        }
+}
+
 }

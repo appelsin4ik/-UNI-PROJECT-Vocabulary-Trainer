@@ -22,7 +22,6 @@ public class CardViewScreen extends BorderPane {
     private static final int CARD_HEIGHT = 300;
 
     private Deck deck;
-    private Runnable onBack;
     private int currentCardIndex = 0;
     private boolean showTranslation = false;
     private Label cardContentLabel;
@@ -40,7 +39,8 @@ public class CardViewScreen extends BorderPane {
         super();
 
         this.deck = deck;
-        this.onBack = onBack;
+
+        System.out.println(this.deck.getSourceFileName());
 
         // UI im Konstruktor einmalig für diese Klasse konstruieren
         this.setPadding(new Insets(20));
@@ -67,9 +67,7 @@ public class CardViewScreen extends BorderPane {
 
         // Card display
         StackPane cardBox = new StackPane();
-        cardBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; " +
-                "-fx-border-radius: 10; -fx-border-color: #ddd; -fx-border-width: 2px; " +
-                "-fx-padding: 30px;");
+        cardBox.setStyle(StyleConstants.CARD_BOX_VIEW);
         cardBox.setMinSize(CARD_WIDTH, CARD_HEIGHT);
         cardBox.setMaxSize(CARD_WIDTH, CARD_HEIGHT);
 
@@ -182,7 +180,7 @@ public class CardViewScreen extends BorderPane {
      * basierend auf dem aktuellen Gewicht der Karte
      */
     private void updateDifficultyButtons() {
-        int weight = deck.getCards().get(currentCardIndex).weight;
+        //int weight = deck.getCards().get(currentCardIndex).weight;
 
         leichtButton.setStyle(getBaseButtonStyle("Leicht", "#4CAF50"));
         mittelButton.setStyle(getBaseButtonStyle("Mittel", "#FFC107"));

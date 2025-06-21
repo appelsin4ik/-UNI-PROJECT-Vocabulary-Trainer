@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Einzelne Lernkarte
  */
+
+// @JsonIgnoreProperties(ignoreUnknown = true)
 public class Card implements Comparable<Card>{
     /** angezeigter Text */
     @JsonProperty("vocabulary")
@@ -12,7 +14,6 @@ public class Card implements Comparable<Card>{
     /** zu erlernendes Ergebnis */
     @JsonProperty("translation")
     public String translation;
-    //public String[] phrases;
     /** gewichtung dieser Karte, verwendet für Shuffel Algorithmus */
     @JsonProperty("weight")
     public int weight;
@@ -56,5 +57,21 @@ public class Card implements Comparable<Card>{
      */
     public String getTerm() {
         return vocabulary;
+    }
+
+    public void setTerm(String term) {
+        this.vocabulary = term;
+    }
+
+    public String getTranslation() {
+        return translation;
+    }
+
+    public void setTranslation(String trans) {
+        this.translation =trans;
+    }
+
+    public int getWeight() {
+        return weight;
     }
 }

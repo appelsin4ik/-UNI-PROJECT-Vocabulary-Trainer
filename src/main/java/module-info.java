@@ -2,8 +2,8 @@
  * Hauptmodule der Anwendung
  */
 module project.main {
-    requires javafx.controls;
-    requires javafx.graphics;
+    requires transitive javafx.graphics;
+    requires transitive javafx.controls;
     requires de.jensd.fx.glyphs.fontawesome;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -13,6 +13,9 @@ module project.main {
     requires com.google.gson;
     requires com.sun.jna.platform;
     requires java.desktop;
+    
+
+    
 
     opens project to javafx.graphics;
     exports project;

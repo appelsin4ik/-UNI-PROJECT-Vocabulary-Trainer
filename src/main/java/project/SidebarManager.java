@@ -54,4 +54,12 @@ public class SidebarManager {
         DeckCreationScreen creatorView = new DeckCreationScreen();
         creatorView.show();
     }
+
+    /**
+     * Wechselt zur Deck-Creation-Anzeige.
+     */
+    public static void showManagementScreen() {
+        DeckManagementScreen managementView = new DeckManagementScreen();
+        managementView.show();
+    }
 }
