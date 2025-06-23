@@ -30,4 +30,15 @@ public class NotificationIO {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    /**
+     * Zeigt eine Warnung für nicht implementierte Funktionen an.
+     */
+    public static void showNotExists() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText("Das Menu ist noch in Arbeit");
+        alert.setContentText("Wartet auf updates :=)");
+        alert.showAndWait();
+    }
 }

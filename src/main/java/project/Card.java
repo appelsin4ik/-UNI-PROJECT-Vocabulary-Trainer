@@ -1,5 +1,7 @@
 package project;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -73,5 +75,20 @@ public class Card implements Comparable<Card>{
 
     public int getWeight() {
         return weight;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Card other = (Card) obj;
+        return weight == other.weight &&
+            vocabulary.equals(other.vocabulary) &&
+            translation.equals(other.translation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vocabulary, translation, weight);
     }
 }

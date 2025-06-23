@@ -1,30 +1,21 @@
 package project;
 
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-
-import java.io.File;
 
 /**
  * Einstellungsbildschirm der Anwendung
  */
 public class SettingsScreen extends BorderPane {
-    /** Hauptszene des Einstellungsbildschirms */
-    private Scene scene;
 
     private AppSettings appSettings;
 
     /** ComboBox für die Auswahl des Themes (Light/Dark Mode) */
     private static ComboBox<String> themeSelector;
-    /** Button zur Dateiauswahl für den Import */
-    private  Button fileSelectButton;
-    /** Label für den Import-Bereich */
-    private  Label importLabel;
+
 
     /**
      * Konstruktor für den Einstellungsbildschirm.
@@ -33,52 +24,8 @@ public class SettingsScreen extends BorderPane {
      * @param deckDisplayScreen Bildschirm zur Anzeige von Decks
      */
     public SettingsScreen( DeckManager deckManager, DeckDisplayScreen deckDisplayScreen) {
-
-        var sidebarManager = SidebarManager.getInstance();
-        //Add Sidebar
-        this.setLeft(sidebarManager.showSidebar());
-
-        // Action
-        for(Button b : sidebarManager.getButtons()) {
-
-            b.setOnAction(e -> {
-                switch (b.getText().trim()){
-                    case "Karten":
-                        sidebarManager.updateButton(sidebarManager.getCardsButton());
-                        SidebarManager.showCreationScreen();
-                        break;
-
-                    case "Karten-Verwaltung":
-                        sidebarManager.updateButton(sidebarManager.getManagementButton());
-                        SidebarManager.showManagementScreen();
-                        break;
-
-                    case "Decks":
-                        sidebarManager.updateButton(sidebarManager.getDecksButton());
-                        SidebarManager.showDeckScreen();
-                        break;
-
-                    case "About":
-                        AboutDialog.show();
-                        break;
-
-                    default:
-                        break;
-                }
-            });
-
-        }
-
+        this.setStyle(StyleConstants.BACKGROUND_DEFAULT);
         this.setCenter(createSettingsScene());
-
-        scene = new Scene(this, 1000, 700);
-    }
-
-    /**
-     * Zeigt den Einstellungsbildschirm im Hauptfenster an.
-     */
-    public void show() {
-        Main.getStage().setScene(scene);
     }
 
     /**
@@ -92,15 +39,14 @@ public class SettingsScreen extends BorderPane {
         // Root-Layout
         VBox root = new VBox(20);
         root.setPadding(new Insets(30));
-        root.setStyle("-fx-background-color: #f9f9f9;");
 
         // Title
         Label title = new Label("Einstellungen");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        title.setStyle(StyleConstants.LABEL_TITLE);
 
         // Light-/Dark-Mode Auswahl
         Label themeLabel = new Label("Light-/Dark-Mode");
-        themeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        themeLabel.setStyle(StyleConstants.LABEL_SETTINGS);
 
         themeSelector = new ComboBox<>();
         themeSelector.getItems().addAll("Light-Mode", "Dark-Mode");
@@ -111,19 +57,6 @@ public class SettingsScreen extends BorderPane {
         themeBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5;");
         themeBox.setPrefHeight(50);
         themeBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-
-        // Datei-Import Bereich
-        importLabel = new Label("Decks importieren");
-        importLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-
-        fileSelectButton = new Button("Datei auswählen (.json)");
-        fileSelectButton.setOnAction(e -> chooseFile());
-
-        HBox importBox = new HBox(465, importLabel, fileSelectButton);
-        importBox.setPadding(new Insets(10));
-        importBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5;");
-        importBox.setPrefHeight(50);
-        importBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         Label toggleLabel = new Label("Beispiel-Decks beim Start automatisch laden:");
 
@@ -142,22 +75,9 @@ public class SettingsScreen extends BorderPane {
         toggleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         // Alles zusammensetzen
-        root.getChildren().addAll(title, themeBox, importBox, toggleBox);
+        root.getChildren().addAll(title, themeBox, toggleBox);
 
         return root;
     }
 
-    /**
-     * Öffnet einen FileChooser-Dialog zur Auswahl einer JSON-Datei für den Deck-Import.
-     */
-    private void chooseFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("JSON-Datei auswählen");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Dateien", "*.json"));
-
-        File selectedFile = fileChooser.showOpenDialog(Main.getStage());
-        if (selectedFile != null) {
-            System.out.println("Ausgewählte Datei: " + selectedFile.getAbsolutePath());
-        }
-    }
 }

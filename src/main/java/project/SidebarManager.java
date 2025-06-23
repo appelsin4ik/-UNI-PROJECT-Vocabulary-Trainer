@@ -1,6 +1,5 @@
 package project;
 
-import javafx.scene.control.Alert;
 /**
  * Manager für die Sidebar
  */
@@ -20,22 +19,12 @@ public class SidebarManager {
     }
 
     /**
-     * Zeigt eine Warnung für nicht implementierte Funktionen an.
-     */
-    public static void showWarning() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText("Das Menu ist noch in Arbeit");
-        alert.setContentText("Wartet auf updates :=)");
-        alert.showAndWait();
-    }
-
-    /**
      * Wechselt zur Settings-Anzeige.
      */
     public static void showSettingsScreen() {
         SettingsScreen settingView = new SettingsScreen(DeckManager.getInstance(),DeckDisplayScreen.getInstance());
-        settingView.show();
+        MainLayout.getInstance().showContent(settingView);
+        getInstance().updateButton(getInstance().getSettingsButton());
     }
 
     /**
@@ -43,8 +32,8 @@ public class SidebarManager {
      */
     public static void showDeckScreen() {
         DeckDisplayScreen deckView = new DeckDisplayScreen(DeckManager.getInstance());
-
-        deckView.show();
+        MainLayout.getInstance().showContent(deckView);
+        getInstance().updateButton(getInstance().getDecksButton());
     }
 
     /**
@@ -52,7 +41,8 @@ public class SidebarManager {
      */
     public static void showCreationScreen() {
         DeckCreationScreen creatorView = new DeckCreationScreen();
-        creatorView.show();
+        MainLayout.getInstance().showContent(creatorView);
+        getInstance().updateButton(getInstance().getCardsButton());
     }
 
     /**
@@ -60,6 +50,7 @@ public class SidebarManager {
      */
     public static void showManagementScreen() {
         DeckManagementScreen managementView = new DeckManagementScreen();
-        managementView.show();
+        MainLayout.getInstance().showContent(managementView);
+        getInstance().updateButton(getInstance().getManagementButton());
     }
 }

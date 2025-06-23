@@ -127,7 +127,6 @@ public class Deck {
 
             return loadedDeck;
         } catch (Exception e) {
-            // System.err.println("Fehler beim Laden des Decks: " + e.getMessage());
             return null;
         }
 

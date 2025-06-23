@@ -1,6 +1,4 @@
 package project;
-
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -10,7 +8,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -24,93 +22,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeckCreationScreen extends BorderPane { 
-    
+
+    /**
+     * ScrollPane für überfällige Karten-Rows
+     */
     private ScrollPane scrollPane;
 
-    private VBox createCollection;
-    /**
-     * Die Hauptszene dieser Ansicht
+    /** Container für den gesamte UI
      */
-    private Scene scene;
+    private VBox createCollection;
+
     /**
      * Textfeld für den Namen des zu erstellenden Decks
      */
     private TextField deckNameField;
+
     /**
      * Container für die Liste der Karteneingabefelder
      */
     private VBox cardListContainer;
+
     /**
      * Liste der Eingabefeld-Paare (Begriff und Übersetzung) für die Karteikarten
      */
     private List<Pair<TextField, TextField>> cardFields;
 
+
     /**
      * Konstruktor, der die Benutzeroberfläche initialisiert und die Sidebar einrichtet
      */
     public DeckCreationScreen() {
-
-        var sidebarManager = SidebarManager.getInstance();
-        //Add Sidebar
-        this.setLeft(sidebarManager.showSidebar());
-
-        // Action
-        for(Button b : sidebarManager.getButtons()) {
-            b.setOnAction(e -> {
-                switch (b.getText().trim()){
-                    case "Einstellungen":
-                        sidebarManager.updateButton(sidebarManager.getSettingsButton());
-                        SidebarManager.showSettingsScreen();
-                        break;
-                    case "Karten-Verwaltung":
-                        sidebarManager.updateButton(sidebarManager.getManagementButton());
-                        SidebarManager.showManagementScreen();
-                        break;
-                    case "Decks":
-                        sidebarManager.updateButton(sidebarManager.getDecksButton());
-                        SidebarManager.showDeckScreen();
-                        break;
-                    case "About":
-                        AboutDialog.show();
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
-
-        this.setStyle("-fx-background-color: #f5f5f5;");
-        this.setCenter(createScene());
-        scene = new Scene(this, 1000, 700);
+        this.setStyle(StyleConstants.BACKGROUND_DEFAULT);
+        this.setCenter(buildMainContent());
     }
 
-    private VBox createScene() {
+    private VBox buildMainContent() {
         createCollection = new VBox(20);
-        createCollection.setPadding(new Insets(40));
+        createCollection.setPadding(new Insets(20));
 
         Label title = new Label("Neues Deck erstellen");
-        title.setStyle(StyleConstants.TITLE);
+        title.setStyle(StyleConstants.LABEL_TITLE);
 
         deckNameField = new TextField();
         deckNameField.setPromptText("Deck-Name eingeben");
         deckNameField.setPrefWidth(500);
-        deckNameField.setStyle(StyleConstants.DECK_TITLE_FIELD);
-        VBox.setMargin(deckNameField, new Insets(0, 0, 8, 0)); 
-
+        deckNameField.setStyle(StyleConstants.TEXTFIELD_HEADER);
 
         cardListContainer = new VBox(20);
-        cardListContainer.setStyle("-fx-background-color: transparent; ");
+        cardListContainer.setStyle(StyleConstants.TRANSPARENT);
 
         scrollPane = new ScrollPane(cardListContainer);
-        scrollPane.setFitToWidth(true);               // Inhalt nutzt volle Breite
+        scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setStyle(StyleConstants.TRANSPARENT);
 
         // optional: schmale, dezente Scrollbar
         Platform.runLater(() -> {
-            scrollPane.lookup(".scroll-bar:vertical")
-                    .setStyle(StyleConstants.SCROLLBAR);
+            Node viewport = scrollPane.lookup(".viewport");
+            if (viewport != null) {
+                viewport.setStyle(StyleConstants.SCROLLBAR);
+            }
         });
 
         /* ScrollPane wächst mit dem VBox-Layout */
@@ -120,192 +92,104 @@ public class DeckCreationScreen extends BorderPane {
         addCardRow();
 
         Button saveDeckButton = new Button("Deck speichern und fortführen");
-        saveDeckButton.setStyle(StyleConstants.DECK_SAVE_BUTTON);
-        saveDeckButton.setOnMouseEntered(e -> saveDeckButton.setStyle(StyleConstants.DECK_SAVE_BUTTON_HOVER));
-        saveDeckButton.setOnMouseExited(e -> saveDeckButton.setStyle(StyleConstants.DECK_SAVE_BUTTON));
+
+        saveDeckButton.setStyle(StyleConstants.BUTTON_SAVE_DECK);
+        saveDeckButton.setOnMouseEntered(e -> saveDeckButton.setStyle(StyleConstants.BUTTON_SAVE_DECK_HOVER));
+        saveDeckButton.setOnMouseExited(e -> saveDeckButton.setStyle(StyleConstants.BUTTON_SAVE_DECK));
         saveDeckButton.setOnAction(e -> saveDeckToFile(Main.getStage()));
 
         createCollection.getChildren().addAll(title, deckNameField, scrollPane, saveDeckButton);
+
         return createCollection;
     }
 
-    public void show() {
-        Main.getStage().setScene(scene);
-    }
-
     /**
-     * Speichert das erstellte Deck als JSON-Datei
+     * speichert das erstellte Deck als JSON-Datei
      * @param stage Das Hauptfenster der Anwendung
      */
     private void saveDeckToFile(Stage stage) {
+
+        /* 1) Grund-Validierung */
         String deckName = deckNameField.getText().trim();
-        if (deckName.isEmpty()) {
-            NotificationIO.showWarning("Fehler", "Bitte einen Deck-Namen eingeben.");
-            return;
-        }
+        if (deckName.isBlank()) { NotificationIO.showWarning("Fehler", "Bitte einen Deck-Namen eingeben."); return; }
 
-        List<Card> cards = new ArrayList<>();
-        for (Pair<TextField, TextField> pair : cardFields) {
-            String term = pair.getKey().getText().trim();
-            String translation = pair.getValue().getText().trim();
-            if (!term.isEmpty() && !translation.isEmpty()) {
-                cards.add(new Card(term, translation));
-            }
-        }
+        List<Card> cards = collectCards();                    
+        if (cards.isEmpty())  { NotificationIO.showWarning("Fehler", "Bitte mindestens eine Karte eingeben."); return; }
 
-        if (cards.isEmpty()) {
-            NotificationIO.showWarning("Fehler", "Bitte mindestens eine Karte mit Begriff und Übersetzung eingeben.");
-            return;
-        }
-
+        /* 2) Deck-Objekt erstellen */
+        String fileName = deckName.endsWith(".json") ? deckName : deckName + ".json";
         Deck deck = new Deck(deckName, cards);
-        deck.setSourceFileName(deckName); // wichtig für Vergleich & Dateiname
+        deck.setSourceFileName(fileName);
 
-        List<Deck> decks = DeckManager.getInstance().getDecks();
-
-        boolean exists = decks.stream().anyMatch(d ->
+        /* 3) Existenz prüfen + evtl. Dialog */
+        List<Deck> all = DeckManager.getInstance().getDecks();
+        boolean duplicate = all.stream().anyMatch(d ->
             d.getName().equalsIgnoreCase(deck.getName()) ||
             d.getSourceFileName().equalsIgnoreCase(deck.getSourceFileName())
         );
 
-        if (exists) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Deck existiert bereits");
-            alert.setHeaderText("Ein Deck mit dem Namen \"" + deck.getName() + "\" existiert bereits.");
-            alert.setContentText("Möchtest du es überschreiben?");
+        if (duplicate && !confirmOverwrite(deck)) return;
+        all.removeIf(d -> d.getName().equalsIgnoreCase(deck.getName()));  // alte Version löschen
+        all.add(deck);
 
-            ButtonType yes = new ButtonType("Überschreiben");
-            ButtonType cancel = new ButtonType("Abbrechen", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(cancel,yes);
-
-            // Button-Referenzen
-            Button overwriteBtn = (Button) alert.getDialogPane().lookupButton(yes);
-            overwriteBtn.setStyle("""
-                -fx-background-color: #2196F3;
-                -fx-text-fill: white;
-                -fx-font-size: 14px;
-                -fx-padding: 10 20;
-                -fx-background-radius: 6;
-            """);
-
-            overwriteBtn.setOnMouseEntered(e -> overwriteBtn.setStyle("""
-                -fx-background-color: #1976D2;
-                -fx-text-fill: white;
-                -fx-font-size: 14px;
-                -fx-padding: 10 20;
-                -fx-background-radius: 6;
-            """));
-            overwriteBtn.setOnMouseExited(e -> overwriteBtn.setStyle("""
-                -fx-background-color: #2196F3;
-                -fx-text-fill: white;
-                -fx-font-size: 14px;
-                -fx-padding: 10 20;
-                -fx-background-radius: 6;
-            """));
-
-            Button cancelBtn = (Button) alert.getDialogPane().lookupButton(cancel);
-            cancelBtn.setStyle("""
-                -fx-background-color: #e0e0e0;
-                -fx-text-fill: #333;
-                -fx-font-size: 14px;
-                -fx-padding: 10 20;
-                -fx-background-radius: 6;
-            """);
-
-            cancelBtn.setOnMouseEntered(e -> cancelBtn.setStyle("""
-                -fx-background-color: #cfcfcf;
-                -fx-text-fill: #333;
-                -fx-font-size: 14px;
-                -fx-padding: 10 20;
-                -fx-background-radius: 6;
-            """));
-            cancelBtn.setOnMouseExited(e -> cancelBtn.setStyle("""
-                -fx-background-color: #e0e0e0;
-                -fx-text-fill: #333;
-                -fx-font-size: 14px;
-                -fx-padding: 10 20;
-                -fx-background-radius: 6;
-            """));
-            
-            
-
-            var result = alert.showAndWait();
- 
-
-            if (result.isEmpty() || result.get() == cancel) {
-                return; // ❌ nicht überschreiben
-            }
-
-            // ✅ Entferne das alte Deck bei Zustimmung
-            decks.removeIf(d ->
-                d.getName().equalsIgnoreCase(deck.getName()) ||
-                d.getSourceFileName().equalsIgnoreCase(deck.getSourceFileName())
-            );
-        }
-
-        decks.add(deck); // neues Deck hinzufügen
-
-        File saveFolder = new File("saves");
-        if (!saveFolder.exists()) {
-            saveFolder.mkdirs();
-        }
-
-        File file = new File(saveFolder, deckName + ".json");
-        try (FileWriter writer = new FileWriter(file)) {
-            // Gson gson = new Gson();
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(deck, writer);
+        /* 4) Datei schreiben */
+        File dir = new File("saves");
+        if (!dir.exists()) dir.mkdirs();
+        try (FileWriter w = new FileWriter(new File(dir, fileName))) {
+            new GsonBuilder().setPrettyPrinting().create().toJson(deck, w);
             DeckDisplayScreen.getInstance().refreshContent();
             NotificationIO.showInfo("Erfolg", "Deck wurde erfolgreich gespeichert!");
-            // Eingaben zurücksetzen
-            deckNameField.clear();
-            cardListContainer.getChildren().clear();
-            cardFields.clear();
-            addCardRow();
+            resetForm();
         } catch (IOException ex) {
             NotificationIO.showWarning("Fehler", "Fehler beim Speichern: " + ex.getMessage());
         }
     }
 
+    /**
+     * fügt dem Edit-Bereich eine neue Zeile (Begriff + Übersetzung + +|– Button) hinzu.  
+     *  – Ein „+“ erzeugt eine neue, leere Zeile darunter.  
+     *  – Ein „–“ entfernt die aktuelle Zeile wieder.  
+     * Die Methode sorgt dabei auch für ein sanftes Nach-unten-Scrollen.
+     */
     private void addCardRow() {
         TextField begriff = new TextField();
         begriff.setPromptText("Begriff");
         begriff.setPrefWidth(400);
-        begriff.setStyle(StyleConstants.CONTENT_TEXTFIELD);
+        begriff.setStyle(StyleConstants.TEXTFIELD_CONTENT);
 
         TextField uebersetzung = new TextField();
         uebersetzung.setPromptText("Übersetzung");
         uebersetzung.setPrefWidth(400);
-        uebersetzung.setStyle(StyleConstants.CONTENT_TEXTFIELD);
+        uebersetzung.setStyle(StyleConstants.TEXTFIELD_CONTENT);
 
         FontAwesomeIconView plus_icon = new FontAwesomeIconView(FontAwesomeIcon.PLUS);
         FontAwesomeIconView minus_icon = new FontAwesomeIconView(FontAwesomeIcon.MINUS);
 
         Button actionBtn = new Button();
         actionBtn.setGraphic(plus_icon);
-        actionBtn.setStyle(StyleConstants.CARD_ADD_BUTTON);
+        actionBtn.setStyle(StyleConstants.BUTTON_ADD_CARD);
 
         HBox row = new HBox(12, begriff, uebersetzung, actionBtn);
         row.setAlignment(Pos.CENTER_LEFT);
-        row.setStyle(StyleConstants.CARD_ROW);
+        row.setStyle(StyleConstants.CARD_BOX_EDIT);
 
         final boolean[] isPlus = {true};
 
         actionBtn.setOnMouseEntered(e -> {
-            if (isPlus[0]) actionBtn.setStyle(StyleConstants.CARD_ADD_BUTTON_HOVER);
-            else actionBtn.setStyle(StyleConstants.CARD_REMOVE_BUTTON_HOVER);
+            if (isPlus[0]) actionBtn.setStyle(StyleConstants.BUTTON_ADD_CARD_HOVER);
+            else actionBtn.setStyle(StyleConstants.BUTTON_REMOVE_CARD_HOVER);
         });
 
         actionBtn.setOnMouseExited(e -> {
-            if (isPlus[0]) actionBtn.setStyle(StyleConstants.CARD_ADD_BUTTON);
-            else actionBtn.setStyle(StyleConstants.CARD_REMOVE_BUTTON);
+            if (isPlus[0]) actionBtn.setStyle(StyleConstants.BUTTON_ADD_CARD);
+            else actionBtn.setStyle(StyleConstants.BUTTON_REMOVE_CARD);
         });
 
         actionBtn.setOnAction(e -> {
             if (isPlus[0]) {
                 isPlus[0] = false;
                 actionBtn.setGraphic(minus_icon);
-                actionBtn.setStyle(StyleConstants.CARD_REMOVE_BUTTON);
+                actionBtn.setStyle(StyleConstants.BUTTON_REMOVE_CARD);
                 addCardRow();
             } else {
                 cardListContainer.getChildren().remove(row);
@@ -329,7 +213,51 @@ public class DeckCreationScreen extends BorderPane {
             }
         });
         smoothScroll.getKeyFrames().add(kf);
-        smoothScroll.setCycleCount(15); // 10 * 10ms = ~100ms Dauer
+        smoothScroll.setCycleCount(15);
         smoothScroll.play();
     }
+
+    /** zeigt den Überschreib-Dialog und gibt true zurück, falls der User „Überschreiben“ wählt */
+    private boolean confirmOverwrite(Deck deck) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Deck existiert bereits");
+        alert.setHeaderText("Ein Deck mit dem Namen \"" + deck.getName() + "\" existiert bereits.");
+        alert.setContentText("Möchtest du es überschreiben?");
+
+        ButtonType yes     = new ButtonType("Überschreiben");
+        ButtonType cancel  = new ButtonType("Abbrechen", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(cancel, yes);
+
+        Button overwrite = (Button) alert.getDialogPane().lookupButton(yes);
+        overwrite.setStyle(StyleConstants.BUTTON_OVERWRITE_DIALOG);
+        overwrite.setOnMouseEntered(e -> overwrite.setStyle(StyleConstants.BUTTON_OVERWRITE_DIALOG_HOVER));
+        overwrite.setOnMouseExited (e -> overwrite.setStyle(StyleConstants.BUTTON_OVERWRITE_DIALOG));
+
+        Button abort = (Button) alert.getDialogPane().lookupButton(cancel);
+        abort.setStyle(StyleConstants.BUTTON_CANCEL_DELETE_DIALOG);
+        abort.setOnMouseEntered(e -> abort.setStyle(StyleConstants.BUTTON_CANCEL_DELETE_DIALOG_HOVER));
+        abort.setOnMouseExited (e -> abort.setStyle(StyleConstants.BUTTON_CANCEL_DELETE_DIALOG));
+
+        return alert.showAndWait().orElse(cancel) == yes;
+    }
+
+    /** liest alle Eingabefelder aus und erzeugt eine Liste von Card-Objekten */
+    private List<Card> collectCards() {
+        List<Card> list = new ArrayList<>();
+        for (Pair<TextField,TextField> p : cardFields) {
+            String term = p.getKey().getText().trim();
+            String trans = p.getValue().getText().trim();
+            if (!term.isEmpty() && !trans.isEmpty()) list.add(new Card(term, trans));
+        }
+        return list;
+    }
+
+    /** setzt das Formular auf Anfang zurück */
+    private void resetForm() {
+        deckNameField.clear();
+        cardListContainer.getChildren().clear();
+        cardFields.clear();
+        addCardRow();
+    }
+
 } 

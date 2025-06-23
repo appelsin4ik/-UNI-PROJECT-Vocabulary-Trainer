@@ -8,27 +8,30 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-
-import java.util.List;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * View für Karten eines Decks
  */
 public class CardViewScreen extends BorderPane {
-    // Screen dimensions as global constants
     private static final int SCREEN_WIDTH = 800;
     private static final int SCREEN_HEIGHT = 600;
     private static final int CARD_WIDTH = 500;
     private static final int CARD_HEIGHT = 300;
 
-    private Deck deck;
+    private final Deck deck;
     private int currentCardIndex = 0;
     private boolean showTranslation = false;
-    private Label cardContentLabel;
 
     private Button leichtButton;
     private Button mittelButton;
     private Button schwerButton;
+
+    private Label cardTermLabel;
+    private Label cardTranslationLabel;
+
+    private final WeightingAlgorithm weighting;
 
     /**
      * View Constructor
@@ -36,116 +39,170 @@ public class CardViewScreen extends BorderPane {
      * @param onBack Runnable, mit dem zurück zum Deck Screen navigiert wird
      */
     public CardViewScreen(Deck deck, Runnable onBack) {
-        super();
-
+        this.weighting = new WeightingAlgorithm(deck.getCards());
         this.deck = deck;
-
-        System.out.println(this.deck.getSourceFileName());
-
-        // UI im Konstruktor einmalig für diese Klasse konstruieren
         this.setPadding(new Insets(20));
-        this.setStyle("-fx-background-color: #f5f5f5;");
+        this.setStyle(StyleConstants.BACKGROUND_DEFAULT);
 
-        FontAwesomeIconView backIcon = new FontAwesomeIconView(FontAwesomeIcon.ARROW_LEFT);
-        backIcon.setSize("16px");
-
-        // Back button (top left)
-        Button backButton = new Button("Back to Decks", backIcon);
-        backButton.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent; -fx-font-size: 14px;");
-        backButton.setOnAction(e -> onBack.run());
-        this.setTop(backButton);
-
-        // Center area with card and navigation
-        HBox centerBox = new HBox(20);
-        centerBox.setAlignment(Pos.CENTER);
-
-        FontAwesomeIconView prevIcon = new FontAwesomeIconView(FontAwesomeIcon.CHEVRON_LEFT);
-        prevIcon.setSize("24px");
-        Button prevButton = new Button("", prevIcon);
-        prevButton.setStyle("-fx-min-width: 60px; -fx-min-height: 60px;");
-        prevButton.setOnAction(e -> navigateCard(-1));
-
-        // Card display
-        StackPane cardBox = new StackPane();
-        cardBox.setStyle(StyleConstants.CARD_BOX_VIEW);
-        cardBox.setMinSize(CARD_WIDTH, CARD_HEIGHT);
-        cardBox.setMaxSize(CARD_WIDTH, CARD_HEIGHT);
-
-        cardContentLabel = new Label();
-        cardContentLabel.setStyle("-fx-font-size: 28px; -fx-text-alignment: center;");
-        cardContentLabel.setAlignment(Pos.CENTER);
-        cardBox.getChildren().add(cardContentLabel);
-        updateCardDisplay();
-
-        // Next button with icon
-        FontAwesomeIconView nextIcon = new FontAwesomeIconView(FontAwesomeIcon.CHEVRON_RIGHT);
-        nextIcon.setSize("24px");
-        Button nextButton = new Button("", nextIcon);
-        nextButton.setStyle("-fx-min-width: 60px; -fx-min-height: 60px;");
-        nextButton.setOnAction(e -> navigateCard(1));
-
-        centerBox.getChildren().addAll(prevButton, cardBox, nextButton);
-        this.setCenter(centerBox);
-
-        // Bottom area with toggle and difficulty buttons
-        VBox bottomBox = new VBox(20);
-        bottomBox.setAlignment(Pos.CENTER);
-
-        FontAwesomeIconView eyeIcon = new FontAwesomeIconView(FontAwesomeIcon.EYE);
-        eyeIcon.setSize("50px");
-        // Toggle button
-        Button toggleButton = new Button("", eyeIcon);
-        toggleButton.setStyle("-fx-font-size: 24px; -fx-padding: 12px 16px;");
-        toggleButton.setOnAction(e -> {
-            showTranslation = !showTranslation;
-            updateCardDisplay();
-        });
-
-        // Difficulty buttons
-        HBox difficultyBox = new HBox(20);
-        difficultyBox.setAlignment(Pos.CENTER);
-
-        leichtButton = createDifficultyButton("Leicht", "#4CAF50");
-        mittelButton = createDifficultyButton("Mittel", "#FFC107");
-        schwerButton = createDifficultyButton("Schwer", "#F44336");
-
-        leichtButton.setOnAction(e -> setCardWeight(1));
-        mittelButton.setOnAction(e -> setCardWeight(2));
-        schwerButton.setOnAction(e -> setCardWeight(3));
-
-        difficultyBox.getChildren().addAll(leichtButton, mittelButton, schwerButton);
-        bottomBox.getChildren().addAll(toggleButton, difficultyBox);
-        this.setBottom(bottomBox);
-
-        updateDifficultyButtons(); // Initialize button states
+        setupTopBar(onBack);
+        setupCenterCardView();
+        setupBottomControls();
+        updateDifficultyButtons();
     }
 
-    /**
-     * View anzeigen
-     */
     public void show() {
         Main.getStage().setScene(new Scene(this, SCREEN_WIDTH, SCREEN_HEIGHT));
     }
 
-    /**
-     * Erstellt einen der leicht, mittel oder schwer buttons, mit denen die Schwierigkeit der Karten angepasst
-     * werden kann
-     */
-    private Button createDifficultyButton(String text, String color) {
-        Button button = new Button(text);
-        button.setStyle(
-                "-fx-font-size: 16px; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-padding: 8px 16px; " +
-                        "-fx-background-radius: 20px; " +
-                        "-fx-background-color: " + color + ";"
-        );
+    private void setupTopBar(Runnable onBack) {
+        FontAwesomeIconView backIcon = new FontAwesomeIconView(FontAwesomeIcon.ARROW_LEFT);
 
-        // Hover effects
-        button.setOnMouseEntered(
-            e -> button.setOpacity(0.7)
-        );
+        backIcon.setSize("16px");
+
+
+        Button backButton = new Button("Zurück", backIcon);
+
+        backButton.setStyle(StyleConstants.BUTTON_BACK);
+        backButton.setOnMouseEntered(e -> backButton.setStyle(StyleConstants.BUTTON_BACK_HOVER));
+        backButton.setOnMouseExited(e -> backButton.setStyle(StyleConstants.BUTTON_BACK));
+        backButton.setOnAction(e -> onBack.run());
+
+
+        HBox topBar = new HBox(backButton);
+
+        topBar.setAlignment(Pos.TOP_LEFT);
+        topBar.setPadding(new Insets(10));
+
+
+        this.setTop(topBar);
+    }
+
+    private void setupCenterCardView() {
+        HBox centerBox = new HBox(20);
+
+        centerBox.setAlignment(Pos.CENTER);
+
+
+        Button prevButton = createIconButton(FontAwesomeIcon.CHEVRON_LEFT, e -> navigateCard());
+        Button nextButton = createIconButton(FontAwesomeIcon.CHEVRON_RIGHT, e -> navigateCard());
+
+
+        StackPane cardBox = new StackPane();
+
+        cardBox.setStyle(StyleConstants.CARD_BOX_VIEW);
+        cardBox.setMinSize(CARD_WIDTH, CARD_HEIGHT);
+        cardBox.setMaxSize(CARD_WIDTH, CARD_HEIGHT);
+
+
+        cardTermLabel = new Label();
+
+        cardTermLabel.setStyle(StyleConstants.LABEL_TERM);
+
+
+        cardTranslationLabel = new Label();
+
+        cardTranslationLabel.setStyle(StyleConstants.LABEL_TRANSLATION);
+
+
+        Rectangle sep = new Rectangle(CARD_WIDTH * 0.6, 2);
+
+        sep.setArcHeight(6);
+        sep.setArcWidth(6);
+        sep.setOpacity(0.8);
+        sep.setFill(Color.web("#bbbbbb"));
+
+
+        VBox cardContentBox = new VBox(10, cardTermLabel, sep, cardTranslationLabel);
+
+        cardContentBox.setAlignment(Pos.CENTER);
+
+        cardBox.getChildren().add(cardContentBox);
+
+        centerBox.getChildren().addAll(prevButton, cardBox, nextButton);
+
+        this.setCenter(centerBox);
+
+        updateCardDisplay();
+    }
+
+    private void setupBottomControls() {
+        VBox bottomBox = new VBox(20);
+
+        bottomBox.setAlignment(Pos.CENTER);
+
+
+        Button toggleButton = createIconButton(FontAwesomeIcon.EYE, e -> {
+            showTranslation = !showTranslation;
+            updateCardDisplay();
+        });
+
+
+        HBox difficultyBox = new HBox(20);
+
+        difficultyBox.setAlignment(Pos.CENTER);
+
+        leichtButton = createDifficultyButton("Leicht", "#4CAF50", 1);
+        mittelButton = createDifficultyButton("Mittel", "#FFC107", 2);
+        schwerButton = createDifficultyButton("Schwer", "#F44336", 3);
+
+        difficultyBox.getChildren().addAll(leichtButton, mittelButton, schwerButton);
+
+        bottomBox.getChildren().addAll(toggleButton, difficultyBox);
+
+        this.setBottom(bottomBox);
+    }
+
+    private Button createIconButton(FontAwesomeIcon icon, javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
+        FontAwesomeIconView iconView = new FontAwesomeIconView(icon);
+
+        iconView.setSize("20px");
+
+        // Manuelle Korrektur: leicht nach links und nach unten verschieben
+        if (icon == FontAwesomeIcon.CHEVRON_LEFT) {
+            iconView.setTranslateX(-2); 
+            iconView.setTranslateY(1); 
+        } else if (icon == FontAwesomeIcon.CHEVRON_RIGHT) {
+            iconView.setTranslateX(2); 
+            iconView.setTranslateY(1); 
+        }
+
+        StackPane iconContainer = new StackPane(iconView);
+
+        iconContainer.setPrefSize(30, 30);
+        iconContainer.setAlignment(Pos.CENTER);
+
+        Button button = new Button();
+
+        button.setGraphic(iconContainer);
+        button.setStyle(StyleConstants.BUTTON_CIRCLE_ICON);
+        button.setPrefSize(60, 60);
+        button.setMinSize(60, 60);
+        button.setMaxSize(60, 60);
+
+        button.setOnMouseEntered(e -> {
+            button.setScaleX(1.05);
+            button.setScaleY(1.05);
+            button.setStyle(StyleConstants.BUTTON_CIRCLE_ICON_HOVER);
+        });
+
+        button.setOnMouseExited(e -> {
+            button.setScaleX(1.0);
+            button.setScaleY(1.0);
+            button.setStyle(StyleConstants.BUTTON_CIRCLE_ICON);
+        });
+        
+        button.setOnAction(handler);
+
+
+        return button;
+    }
+
+    private Button createDifficultyButton(String text, String color, int weightValue) {
+        Button button = new Button(text);
+
+        button.setStyle(getBaseButtonStyle(text, color));
+        button.setOnAction(e -> setCardWeight(weightValue));
+        button.setOnMouseEntered(e -> button.setOpacity(0.7));
         button.setOnMouseExited(e -> button.setOpacity(1.0));
 
         return button;
@@ -158,20 +215,20 @@ public class CardViewScreen extends BorderPane {
      * @return Der komplette CSS-Stil als String
      */
     private String getBaseButtonStyle(String text, String color) {
-        String style = "-fx-font-size: 16px; " +
-                "-fx-font-weight: bold; " +
-                "-fx-text-fill: white; " +
-                "-fx-padding: 8px 16px; " +
-                "-fx-background-radius: 20px; " +
-                "-fx-background-color: " + color + ";";
+        String style = StyleConstants.BUTTON_DIFFICULTY + "-fx-background-color: " + color + ";";
 
-        // Add border if this is the selected button
         if ((text.equals("Leicht") && deck.getCards().get(currentCardIndex).weight == 1) ||
-                (text.equals("Mittel") && deck.getCards().get(currentCardIndex).weight == 2) ||
-                (text.equals("Schwer") && deck.getCards().get(currentCardIndex).weight == 3)) {
-            style += "-fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 20px;";
-        }
+            (text.equals("Mittel") && deck.getCards().get(currentCardIndex).weight == 2) ||
+            (text.equals("Schwer") && deck.getCards().get(currentCardIndex).weight == 3)) {
 
+            // Selektierter Button: etwas dunkler + sanfter Schatten für Feedback
+            style += """
+                -fx-border-color: #33333320; -fx-border-width: 2px; -fx-border-radius: 20px;
+                -fx-background-color: derive(""" 
+                + color + ", -15%);" 
+                +"-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 2);";
+
+        }
         return style;
     }
 
@@ -180,8 +237,6 @@ public class CardViewScreen extends BorderPane {
      * basierend auf dem aktuellen Gewicht der Karte
      */
     private void updateDifficultyButtons() {
-        //int weight = deck.getCards().get(currentCardIndex).weight;
-
         leichtButton.setStyle(getBaseButtonStyle("Leicht", "#4CAF50"));
         mittelButton.setStyle(getBaseButtonStyle("Mittel", "#FFC107"));
         schwerButton.setStyle(getBaseButtonStyle("Schwer", "#F44336"));
@@ -196,80 +251,34 @@ public class CardViewScreen extends BorderPane {
         if (deck.getCards().isEmpty()) return;
 
         Card currentCard = deck.getCards().get(currentCardIndex);
-        currentCard.weight = newWeight; // Directly set the weight
+        currentCard.weight = newWeight;
 
-        // Sort the deck by weight (using Card's compareTo method)
         deck.getCards().sort(Card::compareTo);
 
-        // Find the new index of our current card after sorting
         currentCardIndex = deck.getCards().indexOf(currentCard);
 
-        System.out.println("Card weight set to: " + currentCard.weight);
         updateDifficultyButtons();
         updateCardDisplay();
-        printDeckDebugInfo();
+
         DeckDisplayScreen.saveDeckToFile(this.deck);
-    }
-
-    /**
-     * Navigiert zur nächsten oder vorherigen Karte
-     * @param direction Richtung der Navigation (-1 für vorherige, +1 für nächste Karte)
-     */
-    private void navigateCard(int direction) {
-        showTranslation = false;
-
-        if (deck.getCards().isEmpty()) return;
-
-        // Find next card with weight > 0 when reaching list boundaries
-        if (direction > 0 && currentCardIndex >= deck.getCards().size() - 1) {
-            // Reached end - find first card with weight > 0
-            currentCardIndex = findNextWeightedCard(0);
-        }
-        else if (direction < 0 && currentCardIndex <= 0) {
-            // Reached beginning - find last card with weight > 0
-            currentCardIndex = findPreviousWeightedCard(deck.getCards().size() - 1);
-        }
-        else {
-            // Normal navigation
-            currentCardIndex += direction;
-        }
-
-        updateCardDisplay();
-        updateDifficultyButtons();
 
         printDeckDebugInfo();
     }
 
     /**
-     * Findet den Index der nächsten Karte mit einem Gewicht > 0,
-     * beginnend vom gegebenen Startindex
-     * @param startIndex Der Index, ab dem gesucht werden soll
-     * @return Index der nächsten gewichteten Karte oder 0, falls keine gefunden
+     * Navigiert zur nächsten oder vorherigen Karte mit dem WeightingAlgorithmus
      */
-    private int findNextWeightedCard(int startIndex) {
-        List<Card> cards = deck.getCards();
-        for (int i = startIndex; i < cards.size(); i++) {
-            if (cards.get(i).weight > 0) {
-                return i;
-            }
-        }
-        return 0; // Fallback to first card if none found
-    }
 
-    /**
-     * Findet den Index der vorherigen Karte mit einem Gewicht > 0,
-     * beginnend vom gegebenen Startindex
-     * @param startIndex Der Index, ab dem rückwärts gesucht werden soll
-     * @return Index der vorherigen gewichteten Karte oder letzter Index, falls keine gefunden
-     */
-    private int findPreviousWeightedCard(int startIndex) {
-        List<Card> cards = deck.getCards();
-        for (int i = startIndex; i >= 0; i--) {
-            if (cards.get(i).weight > 0) {
-                return i;
-            }
-        }
-        return cards.size() - 1; // Fallback to last card if none found
+    private void navigateCard() {
+        Card next = weighting.getNextCard();
+
+        if (next == null) return;
+
+        currentCardIndex = deck.getCards().indexOf(next);
+
+        updateCardDisplay();
+        updateDifficultyButtons();
+        printDeckDebugInfo();
     }
 
     /**
@@ -281,11 +290,9 @@ public class CardViewScreen extends BorderPane {
         if (deck.getCards().isEmpty()) return;
 
         Card currentCard = deck.getCards().get(currentCardIndex);
-        if (showTranslation) {
-            cardContentLabel.setText(currentCard.vocabulary + "\n────────────\n" + currentCard.translation);
-        } else {
-            cardContentLabel.setText(currentCard.vocabulary + "\n────────────\n                ");
-        }
+
+        cardTermLabel.setText(currentCard.vocabulary);
+        cardTranslationLabel.setText(showTranslation ? currentCard.translation : "");
     }
 
     /**
@@ -297,20 +304,14 @@ public class CardViewScreen extends BorderPane {
             System.out.println("Deck is empty or not initialized");
             return;
         }
-
         System.out.println("\n=== Deck Debug Info ===");
         System.out.printf("%-20s %s%n", "Card Name", "Weight");
         System.out.println("--------------------- ------");
-
         for (int i = 0; i < deck.getCards().size(); i++) {
             Card card = deck.getCards().get(i);
             String currentIndicator = (i == currentCardIndex) ? "-> " : "   ";
-            System.out.printf("%s%-17s %6d%n",
-                    currentIndicator,
-                    card.vocabulary,
-                    card.weight);
+            System.out.printf("%s%-17s %6d%n", currentIndicator, card.vocabulary, card.weight);
         }
-
         System.out.println("=====================\n");
     }
 }

@@ -2,10 +2,8 @@ package project;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -49,18 +47,13 @@ public class DeckSidebar extends VBox {
     }
 
     /**
-     * Die Hauptcontainer-VBox für die Seitenleiste.
-     * Enthält alle UI-Elemente wie Titel und Navigationsbuttons.
-     */
-    private VBox sidebar;
-
-    /**
      * Liste aller Navigationsbuttons in der Seitenleiste.
      * Wird verwendet, um den Zustand aller Buttons gemeinsam zu verwalten.
      */
     private final List<Button> buttons = new ArrayList<>();
 
     //Navigation buttons
+    
     /**
      * Button für den Zugriff auf die Karten-Ansicht.
      * Ermöglicht die Navigation zur Übersicht aller Karten.
@@ -98,21 +91,18 @@ public class DeckSidebar extends VBox {
      * einschließlich der Navigationsbuttons und des Layouts.
      */
     public DeckSidebar() {
-        System.out.println("DeckSidebar");
-
-        VBox sidebar = new VBox(10);
-        sidebar.setPadding(new Insets(20, 0, 0, 0));
-        sidebar.setStyle("-fx-background-color: #2c3e50;");
-        sidebar.setMinWidth(200);
-        sidebar.setPrefWidth(200);
+        super(10);
+        setPadding(new Insets(20, 0, 0, 0));
+        setStyle("-fx-background-color: #2c3e50;");
+        setMinWidth(200);
+        setPrefWidth(200);
 
         // Sidebar title
         Label sidebarTitle = new Label("P e n t a l i n g o");
         sidebarTitle.setFont(Font.font("K2D"));
-        sidebarTitle.setStyle("-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;");
+        sidebarTitle.setStyle(StyleConstants.LABEL_SIDEBAR);
         sidebarTitle.setAlignment(Pos.CENTER);
         sidebarTitle.setPadding(new Insets(0, 0, 20, 20));
-
 
         cardsButton = createNavButton( "Karten", Icons.CARDS_ICON.getIconView());
         decksButton = createNavButton("Decks", Icons.BARS_ICON.getIconView());
@@ -121,8 +111,14 @@ public class DeckSidebar extends VBox {
         aboutButton = createNavButton("About", Icons.INFO_CIRCLE.getIconView());
         aboutButton.setOnAction(e -> AboutDialog.show());
 
+        cardsButton.setOnAction(e -> SidebarManager.showCreationScreen());
+        decksButton.setOnAction(e -> SidebarManager.showDeckScreen());
+        managementButton.setOnAction(e -> SidebarManager.showManagementScreen());
+        settingsButton.setOnAction(e -> SidebarManager.showSettingsScreen());
+        aboutButton.setOnAction(e -> AboutDialog.show());
+
         // Add all elements to sidebar
-        sidebar.getChildren().addAll(
+        getChildren().addAll(
                 sidebarTitle,
                 cardsButton,
                 decksButton,
@@ -130,10 +126,6 @@ public class DeckSidebar extends VBox {
                 settingsButton,
                 aboutButton
         );
-
-        buttons.addAll(childrenToButtons(sidebar.getChildren()));
-
-        this.sidebar = sidebar;
     }
 
     /**
@@ -141,7 +133,7 @@ public class DeckSidebar extends VBox {
      * @return Sidebar
      */
     public VBox showSidebar() {
-        return sidebar;
+        return this;
     }
 
     /**
@@ -152,20 +144,21 @@ public class DeckSidebar extends VBox {
      */
     private Button createNavButton(String text, FontAwesomeIconView icon) {
         Button button = new Button("  " + text, icon);
+
         button.setPadding(new Insets(0, 0, 0, 0));
         button.setMaxWidth(Double.MAX_VALUE);
         button.setAlignment(Pos.BASELINE_LEFT);
-        button.setStyle(defaultStyle());
+        button.setStyle(StyleConstants.BUTTON_SIDEBAR_DEFAULT);
 
         button.setOnMouseEntered(e -> {
-            if (button.getStyle().equals(defaultStyle())) {
-                button.setStyle(hoveredStyle());
+            if (button.getStyle().equals(StyleConstants.BUTTON_SIDEBAR_DEFAULT)) {
+                button.setStyle(StyleConstants.BUTTON_SIDEBAR_HOVER);
             }
         });
 
         button.setOnMouseExited(e -> {
-            if (button.getStyle().equals(hoveredStyle())) {
-                button.setStyle(defaultStyle());
+            if (button.getStyle().equals(StyleConstants.BUTTON_SIDEBAR_HOVER)) {
+                button.setStyle(StyleConstants.BUTTON_SIDEBAR_DEFAULT);
             }
         });
 
@@ -175,57 +168,16 @@ public class DeckSidebar extends VBox {
     }
 
     /**
-     * Konvertiert eine ObservableList von Nodes in eine Liste von Buttons.
-     * @param children Die Liste der Kindknoten
-     * @return Eine Liste, die nur die Button-Elemente enthält
-     */
-    private List<Button> childrenToButtons(ObservableList<Node> children) {
-        List<Button> buttons = new ArrayList<>();
-        for (Node child : children) {
-            if (child instanceof Button) {
-                buttons.add((Button) child);
-            }
-        }
-        return buttons;
-    }
-
-    /**
      * Aktualisiert den Stil des ausgewählten Buttons und setzt alle anderen zurück.
      * @param selectedButton Der Button, der als ausgewählt markiert werden soll
      */
     public void updateButton(Button selectedButton) {
-        for (Button btn : buttons) {
-            btn.setStyle(defaultStyle());  // reset all
+        if (pressed != null && pressed != selectedButton) {
+            pressed.setStyle(StyleConstants.BUTTON_SIDEBAR_DEFAULT);
         }
-        selectedButton.setStyle(selectedStyle());// highlight selected
+
+        selectedButton.setStyle(StyleConstants.BUTTON_SIDEBAR_SELECTED);
         pressed = selectedButton;
-    }
-
-    /**
-     * Gibt den Standard-Stil für einen nicht ausgewählten Button zurück.
-     * @return CSS-Stil als String
-     */
-    private String defaultStyle() {
-        return "-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: transparent; -fx-padding: 10px;";
-    }
-
-    /**
-     * Gibt den Standard-Stil für einen ausgewählten Button zurück.
-     * @return CSS-Stil als String
-     */
-    private String selectedStyle() {
-        return "-fx-text-fill: white; -fx-font-size: 16px; " +
-                    "-fx-background-color: #1e2c3b; -fx-padding: 10px;";
-    }
-
-    /**
-     * Gibt den Standard-Stil für einen Button über dem die Maus hovert zurück.
-     * @return CSS-Stil als String
-     */
-    private String hoveredStyle() {
-        return "-fx-text-fill: white; -fx-font-size: 16px; " +
-                "-fx-background-color: #34495e; -fx-padding: 10px;";
     }
 
     /**
@@ -272,7 +224,9 @@ public class DeckSidebar extends VBox {
      * Gibt den About-Button zurück.
      * @return Button für den About-Dialog
      */
-    public Button getAboutButton() {return aboutButton;}
+    public Button getAboutButton() {
+        return aboutButton;
+    }
 
     /**
      * Gibt den zuletzt gedrückten Button zurück.
@@ -280,5 +234,9 @@ public class DeckSidebar extends VBox {
      */
     public Button getPressed() {
         return pressed;
+    }
+
+    public DeckSidebar getSidebar() {
+        return this;
     }
 }
