@@ -17,6 +17,6 @@ module project.main {
 
     
 
-    opens project to javafx.graphics;
+    opens project to javafx.graphics,com.google.gson;
     exports project;
 }

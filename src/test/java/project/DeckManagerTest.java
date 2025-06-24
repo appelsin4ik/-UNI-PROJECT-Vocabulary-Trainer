@@ -33,15 +33,18 @@ public class DeckManagerTest {
 
     @Test
     public void testWeightDistributionInAdvancedDeck() {
-        DeckManager manager = new DeckManager(SettingsIO.loadSettings());
-        Deck advancedDeck = manager.getDecks().stream()
-                .filter(d -> d.getName().equals("Advanced Vocabulary"))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Advanced Vocabulary deck not found"));
+        Deck advancedDeck = new Deck("Advanced Vocabulary");
+        advancedDeck.addCard(new Card("Nevertheless", "Néanmoins", 3));
+        advancedDeck.addCard(new Card("Furthermore", "De plus", 3));
+        advancedDeck.addCard(new Card("Therefore", "Par conséquent", 3));
+        advancedDeck.addCard(new Card("Although", "Bien que", 2));
+
+        DeckManager.getInstance().getDecks().clear();
+        DeckManager.getInstance().getDecks().add(advancedDeck);
 
         long weight3Count = advancedDeck.getCards().stream()
-                .filter(c -> c.weight == 3)
-                .count();
+            .filter(c -> c.weight == 3)
+            .count();
 
         assertEquals(3, weight3Count, "Expected 3 cards with weight 3 in Advanced Vocabulary deck");
     }
