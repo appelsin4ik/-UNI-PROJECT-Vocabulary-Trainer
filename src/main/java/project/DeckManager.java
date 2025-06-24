@@ -114,21 +114,30 @@ public class DeckManager {
         deck.addCard(new Card("Hello", "Bonjour", 1));
         deck.addCard(new Card("Goodbye", "Au revoir", 1));
         deck.addCard(new Card("Thank you", "Merci", 1));
-        deck.addCard(new Card("Please", "S'il vous plaît", 2));
+        deck.addCard(new Card("Please", "S'il vous plaît", 1));
         deck.addCard(new Card("Yes", "Oui", 1));
         deck.addCard(new Card("No", "Non", 1));
+        deck.addCard(new Card("Excuse me", "Excusez-moi", 1));
+        deck.addCard(new Card("I'm sorry", "Je suis désolé", 1));
+        deck.addCard(new Card("How are you?", "Comment ça va ?", 1));
+        deck.addCard(new Card("Nice to meet you", "Enchanté", 1));
         return deck;
     }
 
     /**
      * Complexeres Beispiel Deck erstellen
      */
-    private Deck createAdvancedVocabularyDeck() {
+private Deck createAdvancedVocabularyDeck() {
         Deck deck = new Deck("Advanced Vocabulary");
-        deck.addCard(new Card("Nevertheless", "Néanmoins", 3));
-        deck.addCard(new Card("Furthermore", "De plus", 3));
-        deck.addCard(new Card("Although", "Bien que", 2));
-        deck.addCard(new Card("Therefore", "Par conséquent", 3));
+        deck.addCard(new Card("Nevertheless", "Néanmoins", 1));
+        deck.addCard(new Card("Furthermore", "De plus", 1));
+        deck.addCard(new Card("Although", "Bien que", 1));
+        deck.addCard(new Card("Therefore", "Par conséquent", 1));
+        deck.addCard(new Card("Consequently", "En conséquence", 1));
+        deck.addCard(new Card("In contrast", "En revanche", 1));
+        deck.addCard(new Card("Regardless", "Peu importe", 1));
+        deck.addCard(new Card("Hence", "D'où", 1));
+        deck.addCard(new Card("Thus", "Ainsi", 1));
         return deck;
     }
 
@@ -143,6 +152,10 @@ public class DeckManager {
         deck.addCard(new Card("Water", "Eau", 1));
         deck.addCard(new Card("Wine", "Vin", 1));
         deck.addCard(new Card("Beef", "Bœuf", 1));
+        deck.addCard(new Card("Fish", "Poisson", 1));
+        deck.addCard(new Card("Chicken", "Poulet", 1));
+        deck.addCard(new Card("Egg", "Œuf", 1));
+        deck.addCard(new Card("Salt", "Sel", 1));
         return deck;
     }
 
@@ -154,14 +167,16 @@ public class DeckManager {
      */
     private Deck createDummyVocabularyDeck() {
         Deck deck = new Deck("Advanced Food Vocabulary");
-        deck.addCard(new Card("Apple", "Pomme", 1));
-        deck.addCard(new Card("Bread", "Pain", 1));
-        deck.addCard(new Card("Cheese", "Fromage", 1));
-        deck.addCard(new Card("Water", "Eau", 1));
-        deck.addCard(new Card("Wine", "Vin", 1));
-        deck.addCard(new Card("Beef", "Bœuf", 1));
-        deck.addCard(new Card("Cheese", "Fromage", 1));
-        deck.addCard(new Card("Water", "Eau", 1));
+        deck.addCard(new Card("Avocado", "Avocat", 1));
+        deck.addCard(new Card("Blueberry", "Myrtille", 1));
+        deck.addCard(new Card("Asparagus", "Asperge", 1));
+        deck.addCard(new Card("Mushroom", "Champignon", 1));
+        deck.addCard(new Card("Truffle", "Truffe", 1));
+        deck.addCard(new Card("Lobster", "Homard", 1));
+        deck.addCard(new Card("Zucchini", "Courgette", 1));
+        deck.addCard(new Card("Pumpkin", "Citrouille", 1));
+        deck.addCard(new Card("Spinach", "Épinard", 1));
+        deck.addCard(new Card("Goose liver", "Foie gras", 1));
         return deck;
     }
 

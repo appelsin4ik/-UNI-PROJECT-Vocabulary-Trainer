@@ -270,6 +270,8 @@ public class CardViewScreen extends BorderPane {
      */
 
     private void navigateCard() {
+
+        showTranslation = false;
         Card next = weighting.getNextCard();
 
         if (next == null) return;
