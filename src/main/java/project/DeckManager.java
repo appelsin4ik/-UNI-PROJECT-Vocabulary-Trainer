@@ -127,7 +127,7 @@ public class DeckManager {
     /**
      * Complexeres Beispiel Deck erstellen
      */
-private Deck createAdvancedVocabularyDeck() {
+    private Deck createAdvancedVocabularyDeck() {
         Deck deck = new Deck("Advanced Vocabulary");
         deck.addCard(new Card("Nevertheless", "Néanmoins", 1));
         deck.addCard(new Card("Furthermore", "De plus", 1));

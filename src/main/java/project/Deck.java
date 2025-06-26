@@ -13,9 +13,11 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
  * Deck an Karten
  */
 public class Deck {
+    
     /** Name dieses Decks */
     @JsonProperty("name")
     private String name;
+
     /** Liste aller Karten in diesem Deck */
     @JsonProperty("cards")
     private List<Card> cards;

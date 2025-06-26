@@ -1,7 +1,12 @@
 package project;
 
+import javafx.util.Duration;
+import java.util.Collections;
+
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -32,6 +37,7 @@ public class CardViewScreen extends BorderPane {
     private Label cardTranslationLabel;
 
     private final WeightingAlgorithm weighting;
+    private Timeline autoAdvanceTimer;
 
     /**
      * View Constructor
@@ -39,6 +45,10 @@ public class CardViewScreen extends BorderPane {
      * @param onBack Runnable, mit dem zurück zum Deck Screen navigiert wird
      */
     public CardViewScreen(Deck deck, Runnable onBack) {
+        if (SettingsIO.loadSettings().isShuffleOnSessionStart()) {
+            Collections.shuffle(deck.getCards());
+        }
+
         this.weighting = new WeightingAlgorithm(deck.getCards());
         this.deck = deck;
         this.setPadding(new Insets(20));
@@ -48,12 +58,23 @@ public class CardViewScreen extends BorderPane {
         setupCenterCardView();
         setupBottomControls();
         updateDifficultyButtons();
-    }
 
+        printDeckDebugInfo();
+    }
+    
+    /**
+     * Zeigt diesen Screen im primären {@link javafx.stage.Stage}.
+     * Wird von außen (z. B. aus dem Sidebar-Manager) aufgerufen.
+     */
     public void show() {
         Main.getStage().setScene(new Scene(this, SCREEN_WIDTH, SCREEN_HEIGHT));
     }
 
+    /**
+     * Erstellt die obere Leiste mit dem „Zurück“-Button.
+     *
+     * @param onBack Callback, das beim Klick auf „Zurück“ ausgeführt wird
+     */
     private void setupTopBar(Runnable onBack) {
         FontAwesomeIconView backIcon = new FontAwesomeIconView(FontAwesomeIcon.ARROW_LEFT);
 
@@ -77,16 +98,20 @@ public class CardViewScreen extends BorderPane {
         this.setTop(topBar);
     }
 
+    /**
+     * Baut den mittleren Bereich auf, in dem die Karte selbst
+     * (Begriff + Übersetzung) sowie die Navigations-Pfeile angezeigt werden.
+     */
     private void setupCenterCardView() {
         HBox centerBox = new HBox(20);
 
         centerBox.setAlignment(Pos.CENTER);
 
-
+        // Navigations-Buttons (links / rechts)
         Button prevButton = createIconButton(FontAwesomeIcon.CHEVRON_LEFT, e -> navigateCard());
         Button nextButton = createIconButton(FontAwesomeIcon.CHEVRON_RIGHT, e -> navigateCard());
 
-
+        // Karten-Container
         StackPane cardBox = new StackPane();
 
         cardBox.setStyle(StyleConstants.CARD_BOX_VIEW);
@@ -95,15 +120,13 @@ public class CardViewScreen extends BorderPane {
 
 
         cardTermLabel = new Label();
-
         cardTermLabel.setStyle(StyleConstants.LABEL_TERM);
 
 
         cardTranslationLabel = new Label();
-
         cardTranslationLabel.setStyle(StyleConstants.LABEL_TRANSLATION);
 
-
+        // Trennlinie zwischen Begriff & Übersetzung
         Rectangle sep = new Rectangle(CARD_WIDTH * 0.6, 2);
 
         sep.setArcHeight(6);
@@ -113,32 +136,36 @@ public class CardViewScreen extends BorderPane {
 
 
         VBox cardContentBox = new VBox(10, cardTermLabel, sep, cardTranslationLabel);
-
         cardContentBox.setAlignment(Pos.CENTER);
 
         cardBox.getChildren().add(cardContentBox);
-
         centerBox.getChildren().addAll(prevButton, cardBox, nextButton);
-
         this.setCenter(centerBox);
 
         updateCardDisplay();
     }
 
+
+    /**
+     * Erstellt den unteren Bereich:
+     * <ul>
+     *   <li>Augen-Button zum Umschalten der Übersetzung</li>
+     *   <li>Drei Schwierigkeits-Buttons (Leicht, Mittel, Schwer)</li>
+     * </ul>
+     */
     private void setupBottomControls() {
         VBox bottomBox = new VBox(20);
 
         bottomBox.setAlignment(Pos.CENTER);
 
-
+        // „Auge“ – Übersetzung ein/aus
         Button toggleButton = createIconButton(FontAwesomeIcon.EYE, e -> {
             showTranslation = !showTranslation;
             updateCardDisplay();
         });
 
-
+        // Schwierigkeit
         HBox difficultyBox = new HBox(20);
-
         difficultyBox.setAlignment(Pos.CENTER);
 
         leichtButton = createDifficultyButton("Leicht", "#4CAF50", 1);
@@ -148,16 +175,23 @@ public class CardViewScreen extends BorderPane {
         difficultyBox.getChildren().addAll(leichtButton, mittelButton, schwerButton);
 
         bottomBox.getChildren().addAll(toggleButton, difficultyBox);
-
         this.setBottom(bottomBox);
     }
 
+    /**
+     * Hilfsmethode zum Erzeugen eines runden Icon-Buttons
+     * (wird u. a. für Pfeile und das Auge benutzt).
+     *
+     * @param icon     FontAwesome-Icon
+     * @param handler  Event-Handler für {@code setOnAction}
+     * @return voll konfigurierter {@link Button}
+     */
     private Button createIconButton(FontAwesomeIcon icon, javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
         FontAwesomeIconView iconView = new FontAwesomeIconView(icon);
 
         iconView.setSize("20px");
 
-        // Manuelle Korrektur: leicht nach links und nach unten verschieben
+        // leichte optische Korrektur – Icon sitzt sonst nicht perfekt mittig
         if (icon == FontAwesomeIcon.CHEVRON_LEFT) {
             iconView.setTranslateX(-2); 
             iconView.setTranslateY(1); 
@@ -179,6 +213,7 @@ public class CardViewScreen extends BorderPane {
         button.setMinSize(60, 60);
         button.setMaxSize(60, 60);
 
+        // Hover-Animation (kleines Zoom-In)
         button.setOnMouseEntered(e -> {
             button.setScaleX(1.05);
             button.setScaleY(1.05);
@@ -197,11 +232,22 @@ public class CardViewScreen extends BorderPane {
         return button;
     }
 
+    /**
+     * Erzeugt einen farbigen Button für die Gewichtung (Leicht/Mittel/Schwer).
+     *
+     * @param text        Beschriftung
+     * @param color       Basis-Hintergrundfarbe (HEX)
+     * @param weightValue Wert, der der Karte zugewiesen wird, wenn der Nutzer klickt
+     * @return dekorierter {@link Button}
+     */
     private Button createDifficultyButton(String text, String color, int weightValue) {
         Button button = new Button(text);
-
         button.setStyle(getBaseButtonStyle(text, color));
+
+        // Klick: Gewicht setzen
         button.setOnAction(e -> setCardWeight(weightValue));
+
+        // Visuelles Hover-Feedback (Transparenz)
         button.setOnMouseEntered(e -> button.setOpacity(0.7));
         button.setOnMouseExited(e -> button.setOpacity(1.0));
 
@@ -275,6 +321,7 @@ public class CardViewScreen extends BorderPane {
         Card next = weighting.getNextCard();
 
         if (next == null) return;
+        if (autoAdvanceTimer != null) autoAdvanceTimer.stop();
 
         currentCardIndex = deck.getCards().indexOf(next);
 
@@ -290,6 +337,14 @@ public class CardViewScreen extends BorderPane {
      */
     private void updateCardDisplay() {
         if (deck.getCards().isEmpty()) return;
+
+        if (SettingsIO.loadSettings().isAutoAdvanceEnabled()) {
+            if (autoAdvanceTimer != null) autoAdvanceTimer.stop();
+            autoAdvanceTimer = new Timeline(new KeyFrame(Duration.seconds(
+                SettingsIO.loadSettings().getAutoAdvanceSeconds()), e -> navigateCard()));
+            autoAdvanceTimer.setCycleCount(1);
+            autoAdvanceTimer.play();
+        }
 
         Card currentCard = deck.getCards().get(currentCardIndex);
 

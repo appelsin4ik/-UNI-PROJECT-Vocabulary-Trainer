@@ -425,7 +425,10 @@ public final class StyleConstants {
     // ║ LABEL            ║
     // ╚══════════════════╝
 
-    public static final String LABEL_TITLE = "-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;";
+    public static final String GLOBAL_FONT = """
+        -fx-font-family: "K2D", "Segoe UI", "Arial", sans-serif;
+    """;
+    public static final String LABEL_TITLE = GLOBAL_FONT +"-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;";
 
     public static final String LABEL_SETTINGS = "-fx-font-weight: bold; -fx-font-size: 14px;";
 
@@ -455,6 +458,8 @@ public final class StyleConstants {
     // ╔══════════════════╗
     // ║ NO THEME         ║
     // ╚══════════════════╝
+
+
 
     public static final String TRANSPARENT = """
         -fx-background-color: transparent;
@@ -504,6 +509,14 @@ public final class StyleConstants {
     public static final String ICON_PLUS_HOVER = """
         -fx-font-size: 32px;
         -fx-text-fill: #3498db;
+    """;
+
+    public static final String TOOLTIP = """
+            -fx-background-color: #2c7;
+            -fx-text-fill: white;
+            -fx-font-size: 13px;
+            -fx-background-radius: 6;
+            -fx-padding: 8;
     """;
 
     private StyleConstants() {} // verhindert Instanziierung

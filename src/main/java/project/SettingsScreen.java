@@ -1,83 +1,172 @@
 package project;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+
+import javafx.util.Duration;
 
 /**
- * Einstellungsbildschirm der Anwendung
+ * Einstellungsbildschirm der Anwendung, gegliedert nach Themenbereichen.
  */
 public class SettingsScreen extends BorderPane {
 
     private AppSettings appSettings;
 
-    /** ComboBox für die Auswahl des Themes (Light/Dark Mode) */
-    private static ComboBox<String> themeSelector;
-
-
-    /**
-     * Konstruktor für den Einstellungsbildschirm.
-     *
-     * @param deckManager Manager für die Deck-Verwaltung
-     * @param deckDisplayScreen Bildschirm zur Anzeige von Decks
-     */
-    public SettingsScreen( DeckManager deckManager, DeckDisplayScreen deckDisplayScreen) {
+    public SettingsScreen(DeckManager deckManager, DeckDisplayScreen deckDisplayScreen) {
         this.setStyle(StyleConstants.BACKGROUND_DEFAULT);
-        this.setCenter(createSettingsScene());
+        this.setCenter(createMainContent());
     }
-
-    /**
-     * Erstellt das Layout für den Einstellungsbildschirm.
-     *
-     * @return VBox Container mit allen UI-Elementen der Einstellungen
-     */
-    private  VBox createSettingsScene() {
+    /** Settings-Menu anzeigen */
+    private VBox createMainContent() {
         appSettings = SettingsIO.loadSettings();
 
-        // Root-Layout
-        VBox root = new VBox(20);
-        root.setPadding(new Insets(30));
+        VBox root = new VBox(30);
+        root.setPadding(new Insets(20));
 
-        // Title
         Label title = new Label("Einstellungen");
         title.setStyle(StyleConstants.LABEL_TITLE);
 
-        // Light-/Dark-Mode Auswahl
-        Label themeLabel = new Label("Light-/Dark-Mode");
-        themeLabel.setStyle(StyleConstants.LABEL_SETTINGS);
+        VBox generalSection = createGeneralSettingsSection();
+        VBox cardSection = createCardSettingsSection();
 
-        themeSelector = new ComboBox<>();
-        themeSelector.getItems().addAll("Light-Mode", "Dark-Mode");
-        themeSelector.setValue("Light-Mode");
-
-        HBox themeBox = new HBox(495, themeLabel, themeSelector);
-        themeBox.setPadding(new Insets(10));
-        themeBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5;");
-        themeBox.setPrefHeight(50);
-        themeBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-
-        Label toggleLabel = new Label("Beispiel-Decks beim Start automatisch laden:");
-
-        CheckBox toggle = new CheckBox();
-        toggle.setSelected(appSettings.isGenerateDefaultDecks());
-
-        toggle.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-            appSettings.setGenerateDefaultDecks(isSelected);
-            SettingsIO.saveSettings(appSettings);
-        });
-
-        HBox toggleBox = new HBox(450, toggleLabel, toggle);
-        toggleBox.setPadding(new Insets(10));
-        toggleBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5;");
-        toggleBox.setPrefHeight(50);
-        toggleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-
-        // Alles zusammensetzen
-        root.getChildren().addAll(title, themeBox, toggleBox);
-
+        root.getChildren().addAll(title, generalSection, cardSection);
         return root;
     }
 
+    /** Allgemeine Einstellungen (z. B. Beispieldecks laden) */
+    private VBox createGeneralSettingsSection() {
+        Label sectionTitle = new Label("Allgemein");
+        sectionTitle.setStyle(StyleConstants.LABEL_SUBTITLE);
+
+        // DEFAULT-DECKS
+        Label toggleLabel = new Label("Default-Decks laden");
+
+        CheckBox toggle = new CheckBox();
+        toggle.setSelected(appSettings.isGenerateDefaultDecks());
+        toggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            appSettings.setGenerateDefaultDecks(newVal);
+            SettingsIO.saveSettings(appSettings);
+        });
+
+        Tooltip tipToggle = new Tooltip("Wenn aktiviert, werden beim Start automatisch Beispiel-Decks geladen.");
+        tipToggle.setStyle(StyleConstants.TOOLTIP);
+        tipToggle.setWrapText(true);
+        tipToggle.setMaxWidth(220);
+        tipToggle.setShowDelay(Duration.millis(1));
+        Tooltip.install(toggle, tipToggle);
+
+        HBox toggleBox = new HBox(590, toggleLabel, toggle);
+        toggleBox.setAlignment(Pos.CENTER_LEFT);
+        toggleBox.setPadding(new Insets(10));
+        toggleBox.setStyle(StyleConstants.SETTINGS_CONTAINER);
+        toggleBox.setPrefHeight(50);
+
+        // Objekte initialisieren:
+        VBox section = new VBox(10, sectionTitle, toggleBox);
+        return section;
+    }
+
+    /** Karteneinstellungen (z. B. Mischverhalten) */
+    private VBox createCardSettingsSection() {
+
+        Label sectionTitle = new Label("Karteneinstellungen");
+        sectionTitle.setStyle(StyleConstants.LABEL_SUBTITLE);
+
+        // AUTOMATISCH-MISCHEN:
+        Label shuffleLabel = new Label("Automatisch mischen");
+        shuffleLabel.setStyle(StyleConstants.LABEL_SETTINGS);
+
+        CheckBox shuffleToggle = new CheckBox();
+        shuffleToggle.setSelected(appSettings.isShuffleOnSessionStart());
+
+        Tooltip tipShuffle = new Tooltip("Wenn aktiviert, wird die Kartenreihenfolge bei jedem Start zufällig bestimmt.");
+        tipShuffle.setStyle(StyleConstants.TOOLTIP);
+        tipShuffle.setWrapText(true);
+        tipShuffle.setMaxWidth(220);
+        tipShuffle.setShowDelay(Duration.millis(1));
+        Tooltip.install(shuffleToggle, tipShuffle);
+
+        shuffleToggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            appSettings.setShuffleOnSessionStart(newVal);
+            SettingsIO.saveSettings(appSettings);
+        });
+
+        HBox shuffleBox = new HBox(570, shuffleLabel, shuffleToggle);
+        shuffleBox.setAlignment(Pos.CENTER_LEFT);
+        shuffleBox.setPadding(new Insets(10));
+        shuffleBox.setStyle(StyleConstants.SETTINGS_CONTAINER);
+        shuffleBox.setPrefHeight(50);
+
+        // PREFERIERUNG:
+
+        Label hardPrefLabel = new Label("Schwierige Karten bevorzugen");
+        hardPrefLabel.setStyle(StyleConstants.LABEL_SETTINGS);
+
+        CheckBox hardPrefToggle = new CheckBox();
+        hardPrefToggle.setSelected(appSettings.isPreferHardCards());
+
+        Tooltip tipHardPref = new Tooltip("Wenn aktiviert, erscheinen schwierige Karten häufiger bei der Abfrage.");
+        tipHardPref.setStyle(StyleConstants.TOOLTIP);
+        tipHardPref.setWrapText(true);
+        tipHardPref.setMaxWidth(220);
+        tipHardPref.setShowDelay(Duration.millis(1));
+        Tooltip.install(hardPrefToggle, tipHardPref);
+
+        hardPrefToggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            appSettings.setPreferHardCards(newVal);
+            SettingsIO.saveSettings(appSettings);
+        });
+
+        HBox hardPrefBox = new HBox(520, hardPrefLabel, hardPrefToggle);
+        hardPrefBox.setAlignment(Pos.CENTER_LEFT);
+        hardPrefBox.setPadding(new Insets(10));
+        hardPrefBox.setStyle(StyleConstants.SETTINGS_CONTAINER);
+        hardPrefBox.setPrefHeight(50);
+
+        // AUTO
+
+        Label autoAdvanceLabel = new Label("Automatisch zur nächsten Karte:");
+        autoAdvanceLabel.setStyle(StyleConstants.LABEL_SETTINGS);
+
+        CheckBox autoAdvanceToggle = new CheckBox();
+        autoAdvanceToggle.setSelected(appSettings.isAutoAdvanceEnabled());
+
+        Tooltip tipAutoAdvance = new Tooltip("Wenn aktiviert, wird automatisch zur nächsten Karte gewechselt – nach Ablauf der eingestellten Zeit in Sekunden.");
+        tipAutoAdvance.setStyle(StyleConstants.TOOLTIP);
+        tipAutoAdvance.setWrapText(true);
+        tipAutoAdvance.setMaxWidth(220);
+        tipAutoAdvance.setShowDelay(Duration.millis(1));
+        Tooltip.install(autoAdvanceToggle, tipAutoAdvance);
+
+        Spinner<Integer> secondsSpinner = new Spinner<>(1, 30, appSettings.getAutoAdvanceSeconds());
+        secondsSpinner.setEditable(true);
+        secondsSpinner.setDisable(!appSettings.isAutoAdvanceEnabled());
+
+        autoAdvanceToggle.selectedProperty().addListener((obs, o, n) -> {
+            appSettings.setAutoAdvanceEnabled(n);
+            secondsSpinner.setDisable(!n);
+            SettingsIO.saveSettings(appSettings);
+        });
+
+        secondsSpinner.valueProperty().addListener((obs, o, n) -> {
+            appSettings.setAutoAdvanceSeconds(n);
+            SettingsIO.saveSettings(appSettings);
+        });
+
+        HBox output = new HBox(20,autoAdvanceToggle, new Label("alle"), secondsSpinner, new Label("Sek."));
+        output.setAlignment(Pos.CENTER_LEFT);
+        output.setStyle(StyleConstants.TRANSPARENT);
+
+        HBox autoBox = new HBox(250, autoAdvanceLabel, output);
+        autoBox.setAlignment(Pos.CENTER_LEFT);
+        autoBox.setPadding(new Insets(10));
+        autoBox.setStyle(StyleConstants.SETTINGS_CONTAINER);
+        autoBox.setPrefHeight(50);
+
+        // Objekte initialisieren:
+        VBox section = new VBox(10, sectionTitle, shuffleBox, hardPrefBox,autoBox);
+        return section;
+    }
 }

@@ -10,20 +10,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 // @JsonIgnoreProperties(ignoreUnknown = true)
 public class Card implements Comparable<Card>{
-    /** angezeigter Text */
+    /** Der anzuzeigende Begriff (z. B. ein Wort oder eine Phrase) */
     @JsonProperty("vocabulary")
     public String vocabulary;
-    /** zu erlernendes Ergebnis */
+
+    /** Die Übersetzung oder Bedeutung des Begriffs */
     @JsonProperty("translation")
     public String translation;
-    /** gewichtung dieser Karte, verwendet für Shuffel Algorithmus */
+
+    /** Gewichtung der Karte zur Sortierung/Steuerung der Anzeigehäufigkeit */
     @JsonProperty("weight")
     public int weight;
-
-    @Override
-    public int compareTo(Card other) {
-        return Integer.compare(this.weight, other.weight);
-    }
 
     /**
      * Leerer default Konstruktor
@@ -61,22 +58,44 @@ public class Card implements Comparable<Card>{
         return vocabulary;
     }
 
+    /**
+     * Setzt den Begriff der Karte neu.
+     * @param term neuer Begriff
+     */
     public void setTerm(String term) {
         this.vocabulary = term;
     }
 
+    /**
+     * Getter für die Übersetzung.
+     * @return Übersetzung der Karte
+     */
     public String getTranslation() {
         return translation;
     }
 
+    /**
+     * Setzt die Übersetzung neu.
+     * @param trans neue Übersetzung
+     */
     public void setTranslation(String trans) {
         this.translation =trans;
     }
 
+    /**
+     * Getter für das Gewicht.
+     * @return Gewicht der Karte
+     */
     public int getWeight() {
         return weight;
     }
 
+
+    /**
+     * Gleichheitsprüfung zweier Karten (auf Inhalt und Gewicht)
+     * @param obj das Vergleichsobjekt
+     * @return true, wenn alle Felder übereinstimmen
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -87,8 +106,22 @@ public class Card implements Comparable<Card>{
             translation.equals(other.translation);
     }
 
+    /**
+     * Berechnet den Hashcode auf Basis von Begriff, Übersetzung und Gewicht.
+     * @return Hashcode der Karte
+     */
     @Override
     public int hashCode() {
         return Objects.hash(vocabulary, translation, weight);
+    }
+
+    /**
+     * Vergleicht Karten nach ihrer Gewichtung (für Sortierungen).
+     * @param other die andere Karte
+     * @return negativer Wert, wenn diese Karte ein kleineres Gewicht hat, sonst positiv oder 0
+     */
+    @Override
+    public int compareTo(Card other) {
+        return Integer.compare(this.weight, other.weight);
     }
 }

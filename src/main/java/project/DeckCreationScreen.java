@@ -104,7 +104,7 @@ public class DeckCreationScreen extends BorderPane {
     }
 
     /**
-     * speichert das erstellte Deck als JSON-Datei
+     * Speichert das erstellte Deck als JSON-Datei
      * @param stage Das Hauptfenster der Anwendung
      */
     private void saveDeckToFile(Stage stage) {
@@ -146,7 +146,7 @@ public class DeckCreationScreen extends BorderPane {
     }
 
     /**
-     * fügt dem Edit-Bereich eine neue Zeile (Begriff + Übersetzung + +|– Button) hinzu.  
+     * Fügt dem Edit-Bereich eine neue Zeile (Begriff + Übersetzung + +|– Button) hinzu.  
      *  – Ein „+“ erzeugt eine neue, leere Zeile darunter.  
      *  – Ein „–“ entfernt die aktuelle Zeile wieder.  
      * Die Methode sorgt dabei auch für ein sanftes Nach-unten-Scrollen.
@@ -217,7 +217,7 @@ public class DeckCreationScreen extends BorderPane {
         smoothScroll.play();
     }
 
-    /** zeigt den Überschreib-Dialog und gibt true zurück, falls der User „Überschreiben“ wählt */
+    /** Zeigt den Überschreib-Dialog und gibt true zurück, falls der User „Überschreiben“ wählt */
     private boolean confirmOverwrite(Deck deck) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Deck existiert bereits");
@@ -241,7 +241,7 @@ public class DeckCreationScreen extends BorderPane {
         return alert.showAndWait().orElse(cancel) == yes;
     }
 
-    /** liest alle Eingabefelder aus und erzeugt eine Liste von Card-Objekten */
+    /** Liest alle Eingabefelder aus und erzeugt eine Liste von Card-Objekten */
     private List<Card> collectCards() {
         List<Card> list = new ArrayList<>();
         for (Pair<TextField,TextField> p : cardFields) {
@@ -252,7 +252,7 @@ public class DeckCreationScreen extends BorderPane {
         return list;
     }
 
-    /** setzt das Formular auf Anfang zurück */
+    /** Setzt das Formular auf Anfang zurück */
     private void resetForm() {
         deckNameField.clear();
         cardListContainer.getChildren().clear();

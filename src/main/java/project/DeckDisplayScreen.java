@@ -68,7 +68,7 @@ public class DeckDisplayScreen extends BorderPane {
         VBox deckLayout = new VBox(20);
         deckLayout.setPadding(new Insets(10));
 
-        // Title
+        // Titel
         Label title = new Label("Deine Decks");
         title.setStyle(StyleConstants.LABEL_TITLE);
 
@@ -132,7 +132,7 @@ public class DeckDisplayScreen extends BorderPane {
             }
         });
 
-        /* ScrollPane wächst mit dem VBox-Layout */
+        // ScrollPane wächst mit dem VBox-Layout 
         VBox.setVgrow(deckScroll, Priority.ALWAYS);
 
         content.getChildren().addAll(title, deckScroll);
@@ -198,6 +198,14 @@ public class DeckDisplayScreen extends BorderPane {
 
 
     
+    /**
+     * Erstellt ein {@link Runnable}, das beim Zurücknavigieren ausgeführt wird.
+     * 
+     * Das Runnable ruft das zentrale {@link MainLayout} auf und zeigt diesen Screen erneut an.
+     * Praktisch, um dem Nutzer z. B. nach einer Aktion wieder zur Übersicht zu springen.
+     *
+     * @return Ein {@link Runnable}, das diesen Screen erneut ins Layout einfügt
+     */
     private Runnable getBackRunnable() {
         return () -> {
             MainLayout layout = MainLayout.getInstance();
@@ -217,12 +225,12 @@ public class DeckDisplayScreen extends BorderPane {
         addDeckBox.setMinWidth(228);
         addDeckBox.setMinHeight(120);
 
-        // Create big plus icon
+        // Großes Plus-Symbol
         FontAwesomeIconView plusIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS);
         plusIcon.setSize("50px");
         plusIcon.setFill(Color.web("#7f8c8d")); 
 
-        // Make the whole box clickable
+        // Box clickbar machen
         addDeckBox.setOnMouseClicked(e -> addNewDeck());
         addDeckBox.setOnMouseEntered(e -> {
             addDeckBox.setStyle(StyleConstants.BUTTON_ADD_DECK_BOX_HOVER);
@@ -250,7 +258,6 @@ public class DeckDisplayScreen extends BorderPane {
             new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
-        // Set initial directory (optional)
         try {
             File initialDir = Main.getUserdataPath().toFile();
             if (initialDir.exists()) {
@@ -260,7 +267,6 @@ public class DeckDisplayScreen extends BorderPane {
             System.err.println("Couldn't set initial directory: " + e.getMessage());
         }
 
-        // Show open file dialog
         File selectedFile = fileChooser.showOpenDialog(Main.getStage());
 
         if (selectedFile != null) {
@@ -304,7 +310,6 @@ public class DeckDisplayScreen extends BorderPane {
                     return;
                 }
 
-                // 3. ✅ Kein Konflikt → importieren
                 DeckManager.saveDeck(importedDeck);
                 deckManager.addDeck(importedDeck);
                 importedDeck.save();
@@ -324,7 +329,7 @@ public class DeckDisplayScreen extends BorderPane {
      * Aktualisiert den Hauptinhalt des Screens durch Neuerstellen und Setzen des Contents
      */
     public void refreshContent() {
-         this.setCenter(createMainContent()); // Recreate and set the content
+         this.setCenter(createMainContent());
     }
 
     /**
@@ -335,7 +340,6 @@ public class DeckDisplayScreen extends BorderPane {
         if(instance == null) {
             instance = new DeckDisplayScreen(DeckManager.getInstance());
         }
-
         return instance;
     }
 
@@ -359,9 +363,18 @@ public class DeckDisplayScreen extends BorderPane {
         }
     }
 
+
+    /**
+     * Gibt das Haupt-UI-Element (Root-Node) dieses Screens zurück.
+     * 
+     * Diese Methode wird von außen aufgerufen, wenn der Screen im Hauptlayout
+     * angezeigt werden soll.
+     *
+     * @return Das komplette UI-Element dieses Screens (dieses Objekt selbst)
+     */
     public Parent getContent() {
-    return this;
-}
+        return this;
+    }
 }
 
 
