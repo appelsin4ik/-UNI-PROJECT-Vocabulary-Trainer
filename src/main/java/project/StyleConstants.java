@@ -430,11 +430,15 @@ public final class StyleConstants {
     """;
     public static final String LABEL_TITLE = GLOBAL_FONT +"-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;";
 
-    public static final String LABEL_SETTINGS = "-fx-font-weight: bold; -fx-font-size: 14px;";
+    public static final String LABEL_SETTINGS = "-fx-font-size: 14px;";
 
-    public static final String LABEL_SUBTITLE = "-fx-font-size: 18px; -fx-font-weight: bold;";
+    public static final String LABEL_SUBTITLE = "-fx-font-size: 18px;";
+
+     public static final String LABEL_SUBTITLE_BOLD = "-fx-font-size: 18px; -fx-font-weight: bold;";
 
     public static final String LABEL_HEADER = "-fx-font-size: 16px; -fx-font-weight: bold;";
+
+
 
     public static final String LABEL_TRANSLATION = """
         -fx-font-size: 22px;

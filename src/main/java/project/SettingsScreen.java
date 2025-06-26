@@ -38,10 +38,11 @@ public class SettingsScreen extends BorderPane {
     /** Allgemeine Einstellungen (z. B. Beispieldecks laden) */
     private VBox createGeneralSettingsSection() {
         Label sectionTitle = new Label("Allgemein");
-        sectionTitle.setStyle(StyleConstants.LABEL_SUBTITLE);
+        sectionTitle.setStyle(StyleConstants.LABEL_SUBTITLE_BOLD);
 
-        // DEFAULT-DECKS
+        // DEFAULT
         Label toggleLabel = new Label("Default-Decks laden");
+        toggleLabel.setStyle(StyleConstants.LABEL_SETTINGS);
 
         CheckBox toggle = new CheckBox();
         toggle.setSelected(appSettings.isGenerateDefaultDecks());
@@ -63,7 +64,6 @@ public class SettingsScreen extends BorderPane {
         toggleBox.setStyle(StyleConstants.SETTINGS_CONTAINER);
         toggleBox.setPrefHeight(50);
 
-        // Objekte initialisieren:
         VBox section = new VBox(10, sectionTitle, toggleBox);
         return section;
     }
@@ -72,7 +72,7 @@ public class SettingsScreen extends BorderPane {
     private VBox createCardSettingsSection() {
 
         Label sectionTitle = new Label("Karteneinstellungen");
-        sectionTitle.setStyle(StyleConstants.LABEL_SUBTITLE);
+        sectionTitle.setStyle(StyleConstants.LABEL_SUBTITLE_BOLD);
 
         // AUTOMATISCH-MISCHEN:
         Label shuffleLabel = new Label("Automatisch mischen");
