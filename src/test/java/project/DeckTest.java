@@ -2,6 +2,9 @@ package project;
 
 import org.junit.jupiter.api.Test;
 
+import project.items.Card;
+import project.items.Deck;
+
 import java.util.ArrayList;
 import java.util.List;
 

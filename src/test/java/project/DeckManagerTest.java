@@ -2,6 +2,10 @@ package project;
 
 import org.junit.jupiter.api.Test;
 
+import project.control.DeckManager;
+import project.items.Card;
+import project.items.Deck;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

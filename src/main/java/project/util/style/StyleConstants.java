@@ -1,4 +1,4 @@
-package project;
+package project.util.style;
 
 public final class StyleConstants {
 

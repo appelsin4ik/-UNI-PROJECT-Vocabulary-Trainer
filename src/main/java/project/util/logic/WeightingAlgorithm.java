@@ -1,7 +1,10 @@
-package project;
+package project.util.logic;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import project.items.Card;
+import project.util.io.SettingsIO;
 
 /**
  * Wiege algorithmus um die Karten anzuzeigen

@@ -1,4 +1,4 @@
-package project;
+package project.screens;
 import com.google.gson.GsonBuilder;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -13,6 +13,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import project.Main;
+import project.control.DeckManager;
+import project.items.Card;
+import project.items.Deck;
+import project.util.io.NotificationIO;
+import project.util.style.StyleConstants;
 import javafx.util.Duration;
 
 import java.io.File;

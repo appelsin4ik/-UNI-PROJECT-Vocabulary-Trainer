@@ -1,4 +1,4 @@
-package project;
+package project.screens;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -20,6 +20,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import project.control.DeckManager;
+import project.items.Card;
+import project.items.Deck;
+import project.util.io.NotificationIO;
+import project.util.style.StyleConstants;
 
 public class DeckManagementScreen extends BorderPane {
 

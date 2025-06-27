@@ -1,4 +1,4 @@
-package project;
+package project.screens;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -6,6 +6,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import javafx.util.Duration;
+import project.control.DeckManager;
+import project.util.io.SettingsIO;
+import project.util.settings.AppSettings;
+import project.util.style.StyleConstants;
 
 /**
  * Einstellungsbildschirm der Anwendung, gegliedert nach Themenbereichen.

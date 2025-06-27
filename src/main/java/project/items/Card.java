@@ -1,4 +1,4 @@
-package project;
+package project.items;
 
 import java.util.Objects;
 

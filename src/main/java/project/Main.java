@@ -4,6 +4,10 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
+import project.control.DeckManager;
+import project.screens.DeckDisplayScreen;
+import project.util.io.SettingsIO;
+import project.util.settings.AppSettings;
 
 import java.io.IOException;
 import java.nio.file.Files;

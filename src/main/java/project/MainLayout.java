@@ -3,6 +3,8 @@ package project;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import project.control.SidebarManager;
+import project.util.style.StyleConstants;
 
 /**
  * Hauptlayout der Anwendung mit fester Sidebar und dynamischem Mittelteil.

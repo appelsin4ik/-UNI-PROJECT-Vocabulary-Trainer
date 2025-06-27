@@ -1,4 +1,4 @@
-package project;
+package project.screens;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,6 +15,13 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.geometry.Pos;
 import javafx.stage.FileChooser;
+import project.Main;
+import project.MainLayout;
+import project.control.DeckManager;
+import project.items.Deck;
+import project.util.io.NotificationIO;
+import project.util.style.StyleConstants;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
