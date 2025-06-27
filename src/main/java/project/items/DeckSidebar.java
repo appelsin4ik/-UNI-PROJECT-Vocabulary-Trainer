@@ -1,4 +1,4 @@
-package project;
+package project.items;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -9,6 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import project.control.SidebarManager;
+import project.screens.AboutDialog;
+import project.util.style.StyleConstants;
 
 import java.util.*;
 

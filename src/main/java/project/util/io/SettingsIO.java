@@ -1,6 +1,8 @@
-package project;
+package project.util.io;
 
 import com.google.gson.Gson;
+
+import project.util.settings.AppSettings;
 
 import java.io.File;
 import java.io.FileReader;

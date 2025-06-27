@@ -1,4 +1,11 @@
-package project;
+package project.control;
+
+import project.MainLayout;
+import project.items.DeckSidebar;
+import project.screens.DeckCreationScreen;
+import project.screens.DeckDisplayScreen;
+import project.screens.DeckManagementScreen;
+import project.screens.SettingsScreen;
 
 /**
  * Manager für die Sidebar

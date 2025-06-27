@@ -1,7 +1,13 @@
-package project;
+package project.control;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import project.items.Card;
+import project.items.Deck;
+import project.util.io.NotificationIO;
+import project.util.io.SettingsIO;
+import project.util.settings.AppSettings;
 
 import java.io.File;
 import java.io.FileReader;

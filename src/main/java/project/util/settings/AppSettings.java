@@ -1,4 +1,4 @@
-package project;
+package project.util.settings;
 
 /**
  * Diese Klasse verwaltet die Anwendungseinstellungen.

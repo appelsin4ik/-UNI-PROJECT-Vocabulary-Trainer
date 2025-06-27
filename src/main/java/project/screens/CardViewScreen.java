@@ -1,6 +1,13 @@
-package project;
+package project.screens;
 
 import javafx.util.Duration;
+import project.Main;
+import project.items.Card;
+import project.items.Deck;
+import project.util.io.SettingsIO;
+import project.util.logic.WeightingAlgorithm;
+import project.util.style.StyleConstants;
+
 import java.util.Collections;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;

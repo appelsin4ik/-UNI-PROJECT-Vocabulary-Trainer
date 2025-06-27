@@ -1,7 +1,9 @@
     package project;
 
     import javafx.application.Platform;
-    import org.junit.jupiter.api.Test;
+import project.screens.AboutDialog;
+
+import org.junit.jupiter.api.Test;
 
     import static org.junit.jupiter.api.Assertions.*;
 

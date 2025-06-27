@@ -1,4 +1,4 @@
-package project;
+package project.items;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class Deck {
      * Deck als Json in einer Datei speichern
      */
     public void save() throws IOException {
-        var userdataPath = Main.getUserdataPath();
+        var userdataPath = project.Main.getUserdataPath();
         var file = userdataPath.resolve(name + ".json").toFile();
         this.writeFile(file);
     }
