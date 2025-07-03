@@ -97,7 +97,7 @@ public class SettingsScreen extends BorderPane {
             SettingsIO.saveSettings(appSettings);
         });
 
-        HBox shuffleBox = new HBox(570, shuffleLabel, shuffleToggle);
+        HBox shuffleBox = new HBox(580, shuffleLabel, shuffleToggle);
         shuffleBox.setAlignment(Pos.CENTER_LEFT);
         shuffleBox.setPadding(new Insets(10));
         shuffleBox.setStyle(StyleConstants.SETTINGS_CONTAINER);
@@ -123,7 +123,7 @@ public class SettingsScreen extends BorderPane {
             SettingsIO.saveSettings(appSettings);
         });
 
-        HBox hardPrefBox = new HBox(520, hardPrefLabel, hardPrefToggle);
+        HBox hardPrefBox = new HBox(530, hardPrefLabel, hardPrefToggle);
         hardPrefBox.setAlignment(Pos.CENTER_LEFT);
         hardPrefBox.setPadding(new Insets(10));
         hardPrefBox.setStyle(StyleConstants.SETTINGS_CONTAINER);

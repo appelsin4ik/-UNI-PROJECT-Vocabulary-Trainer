@@ -15,8 +15,13 @@ module project.main {
     requires java.desktop;
     
 
+    exports project;
+    exports project.util.settings;
+
     
 
-    opens project to javafx.graphics,com.google.gson;
-    exports project;
+     opens project to javafx.graphics,com.google.gson;
+     opens project.util.settings to com.google.gson;
+    // opens project.util.io to com.google.gson;
+
 }

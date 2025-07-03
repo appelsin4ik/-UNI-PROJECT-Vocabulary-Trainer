@@ -42,7 +42,7 @@ public class WeightingAlgorithmTest {
 
         int iterations = 10_000;
         for (int i = 0; i < iterations; i++) {
-            Card drawn = algorithm.getNextCard();
+            Card drawn = algorithm.getNextCardRaw();
             counts.put(drawn, counts.get(drawn) + 1);
         }
 

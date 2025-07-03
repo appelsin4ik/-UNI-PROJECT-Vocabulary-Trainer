@@ -94,7 +94,22 @@ public class WeightingAlgorithm {
 
         return nextCard;
 
-        }       
+    }
+    
+    public Card getNextCardRaw() {
+        List<Card> weightedList = new ArrayList<>();
+        for (Card c : cards) {
+            int repetitions = switch (c.weight) {
+                case 1 -> 1;
+                case 2 -> 3;
+                case 3 -> 6;
+                default -> 1;
+            };
+            for (int i = 0; i < repetitions; i++) weightedList.add(c);
+        }
+        return weightedList.isEmpty() ? null :
+            weightedList.get((int)(Math.random() * weightedList.size()));
+    }
 
 }
 
