@@ -34,3 +34,26 @@ The project includes (or aims to include) the following:
 
 Here’s a quick look at what you’ll find:
 
+├── src/ # Java source code
+├── .idea/ # IDE configuration files (can ignore)
+├── gradle/ # Gradle wrapper files
+├── build.gradle.kts # Build script
+├── settings.gradle.kts # Gradle settings
+├── .gitignore
+├── Aktivitäten-, Use-Case, Class Diagrams (drawio / png)
+├── Benutzerhandbuch.docx # User manual
+├── Pflichtenheft.docx # Requirements document
+└── (other documentation, Excel files, etc.)
+
+Feel free to browse the `.docx`, `.drawio`, and diagram files — they help explain the design decisions, user flows, and architecture.
+
+---
+
+# 🛠 Tech Stack
+
+- **Language:** Java  
+- **Build Tool:** Gradle  
+- **IDE / Tools:** IntelliJ IDEA (or your preferred Java IDE)  
+- **Documentation:** UML diagrams, Word docs  
+
+---
