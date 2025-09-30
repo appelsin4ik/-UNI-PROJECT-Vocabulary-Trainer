@@ -34,6 +34,7 @@ The project includes (or aims to include) the following:
 
 Here’s a quick look at what you’ll find:
 
+.
 ├── src/ # Java source code
 ├── .idea/ # IDE configuration files (can ignore)
 ├── gradle/ # Gradle wrapper files
@@ -55,5 +56,30 @@ Feel free to browse the `.docx`, `.drawio`, and diagram files — they help expl
 - **Build Tool:** Gradle  
 - **IDE / Tools:** IntelliJ IDEA (or your preferred Java IDE)  
 - **Documentation:** UML diagrams, Word docs  
+
+---
+
+## 👥 My Contribution & Role
+
+Here are the parts I worked on or took responsibility for:
+
+- [ ] Core logic for practicing vocabulary (e.g. quiz modes)  
+- [ ] Integration between front-end and back-end parts  
+- [ ] Writing parts of the documentation (user manual, design diagrams)  
+- [ ] Refactoring for code clarity and style  
+- [ ] Adding tests (if any)  
+- [ ] Bug fixing and cleaning up  
+
+---
+
+## 🖼 Screenshots / Demo
+
+> *(Add some images or GIFs here to show the app in action — it helps a lot!)*
+
+For example:
+
+- Vocabulary list view  
+- Quiz / practice view  
+- Progress / stats view  
 
 ---
