@@ -33,6 +33,8 @@ The project includes (or aims to include) the following:
 ## 📂 Repository Structure
 
 Here’s a quick look at what you’ll find:
+```markdown
+
 
 .
 ├── src/ # Java source code
@@ -49,6 +51,8 @@ Here’s a quick look at what you’ll find:
 Feel free to browse the `.docx`, `.drawio`, and diagram files — they help explain the design decisions, user flows, and architecture.
 
 ---
+```
+
 
 # 🛠 Tech Stack
 
@@ -61,14 +65,27 @@ Feel free to browse the `.docx`, `.drawio`, and diagram files — they help expl
 
 ## 👥 My Contribution & Role
 
-Here are the parts I worked on or took responsibility for:
+During this university project, I was actively involved in several key areas:
 
-- [ ] Core logic for practicing vocabulary (e.g. quiz modes)  
-- [ ] Integration between front-end and back-end parts  
-- [ ] Writing parts of the documentation (user manual, design diagrams)  
-- [ ] Refactoring for code clarity and style  
-- [ ] Adding tests (if any)  
-- [ ] Bug fixing and cleaning up  
+- 💻 **Implementation:**  
+  Developed core Java functionality for vocabulary practice logic (quiz, input validation, word matching, etc.)
+
+- 🧩 **Integration:**  
+  Helped connect different project modules, ensuring smooth cooperation between GUI and logic components
+
+- 🧠 **Concept & Design:**  
+  Contributed to designing the app structure and creating UML diagrams (Use Case & Activity diagrams)
+
+- 🪶 **Documentation:**  
+  Participated in writing and proofreading the *Benutzerhandbuch (User Manual)* and *Pflichtenheft (Requirements Document)*
+
+- 🔍 **Testing & Debugging:**  
+  Tested the app features, reported and fixed several logical bugs
+
+- 🤝 **Team Collaboration:**  
+  Worked closely with teammates to coordinate tasks, track progress, and make design decisions
+
+> ⚡ *I focused on making the application stable, clean, and user-friendly — combining both technical and creative aspects of the project.*
 
 ---
 
