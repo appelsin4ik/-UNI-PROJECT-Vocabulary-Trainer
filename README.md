@@ -34,8 +34,6 @@ The project includes (or aims to include) the following:
 
 Here’s a quick look at what you’ll find:
 ```markdown
-
-
 .
 ├── src/ # Java source code
 ├── .idea/ # IDE configuration files (can ignore)
@@ -47,11 +45,12 @@ Here’s a quick look at what you’ll find:
 ├── Benutzerhandbuch.docx # User manual
 ├── Pflichtenheft.docx # Requirements document
 └── (other documentation, Excel files, etc.)
+```
 
 Feel free to browse the `.docx`, `.drawio`, and diagram files — they help explain the design decisions, user flows, and architecture.
 
 ---
-```
+
 
 
 # 🛠 Tech Stack
