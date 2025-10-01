@@ -99,3 +99,12 @@ For example:
 - Progress / stats view  
 
 ---
+
+**Localization & Improvements (Future Goals):**  
+- 🌍 Plan to add **English language support**, improve **UI responsiveness**, and optimize the **user experience**
+
+> 💡 *Note:*  
+> - The project was mainly **developed on macOS** — it runs on Windows as well, but there might be **minor display issues with emojis** in some UI components.  
+> - The application is currently **only available in German**, but adding **English localization** and other improvements is planned for the future.  
+
+
