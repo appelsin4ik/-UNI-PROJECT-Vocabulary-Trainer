@@ -98,13 +98,23 @@ The start screen where users can choose a language or start a training session.
 
 ---
 
+### Creation Menu
+
+Here users can create their own decks.
+
 ![Create Deck](screenshots/app_new_deck.png)
-> 💡 *Note:*
-> Create Deck
+
+---
+
+### Editing Menu
+
+Editing and Refractoring decks is also possible.
 
 ![Manage Decks](screenshots/app_management.png)
-> 💡 *Note:*
-> Manage Decks
+
+---
+
+![Manage Decks Gif](screenshots/gif_app_managing.gif)
 
 ---
 
