@@ -90,13 +90,7 @@ During this university project, I was actively involved in several key areas:
 
 ## 🖼 Screenshots / Demo
 
-> *(Add some images or GIFs here to show the app in action — it helps a lot!)*
-
-For example:
-
-- Vocabulary list view  
-- Quiz / practice view  
-- Progress / stats view  
+![Main screen](screenshots/app_main_screen.png)
 
 ---
 
