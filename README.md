@@ -90,9 +90,13 @@ During this university project, I was actively involved in several key areas:
 
 ## 🖼 Screenshots / Demo
 
+### Main Menu
+
+The start screen where users can choose a language or start a training session.
+
 ![Main screen](screenshots/app_main_screen.png)
-> 💡 *Note:*
-> Main Screen
+
+---
 
 ![Create Deck](screenshots/app_new_deck.png)
 > 💡 *Note:*
