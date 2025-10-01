@@ -118,6 +118,12 @@ Editing and Refractoring decks is also possible.
 
 ---
 
+### Vocabulary Cards
+
+![Manage Decks Gif](screenshots/gif_app_cards.gif)
+
+---
+
 **Localization & Improvements (Future Goals):**  
 - 🌍 Plan to add **English language support**, improve **UI responsiveness**, and optimize the **user experience**
 
