@@ -76,6 +76,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         Main.stage = stage;
+        stage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("/Logo.png")));
         stage.setTitle("Pentalingo");
         stage.setResizable(false);
 
