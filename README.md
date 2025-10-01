@@ -120,7 +120,7 @@ Editing and Refractoring decks is also possible.
 
 ### Vocabulary Cards
 
-![Manage Decks Gif](screenshots/gif_app_cards.gif)
+![Vocabulary Gif](screenshots/gif_app_cards.gif)
 
 ---
 
