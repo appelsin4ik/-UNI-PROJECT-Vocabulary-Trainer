@@ -123,7 +123,7 @@ public class SettingsScreen extends BorderPane {
             SettingsIO.saveSettings(appSettings);
         });
 
-        HBox hardPrefBox = new HBox(530, hardPrefLabel, hardPrefToggle);
+        HBox hardPrefBox = new HBox(525, hardPrefLabel, hardPrefToggle);
         hardPrefBox.setAlignment(Pos.CENTER_LEFT);
         hardPrefBox.setPadding(new Insets(10));
         hardPrefBox.setStyle(StyleConstants.SETTINGS_CONTAINER);
