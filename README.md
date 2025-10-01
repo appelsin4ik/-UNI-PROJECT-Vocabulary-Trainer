@@ -91,6 +91,16 @@ During this university project, I was actively involved in several key areas:
 ## 🖼 Screenshots / Demo
 
 ![Main screen](screenshots/app_main_screen.png)
+> 💡 *Note:*
+> Main Screen
+
+![Create Deck](screenshots/app_new_deck.png)
+> 💡 *Note:*
+> Create Deck
+
+![Manage Decks](screenshots/app_management.png)
+> 💡 *Note:*
+> Manage Decks
 
 ---
 
